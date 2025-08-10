@@ -2,9 +2,10 @@ package org.classreviewsite.review.controller.data.Request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
+@AllArgsConstructor @NoArgsConstructor
 public class UpdateReviewRequest {
 
     Long postId;
@@ -15,13 +16,15 @@ public class UpdateReviewRequest {
 
     Double starLating;
 
-    Long important;
+    Long userNumber;
 
-    Long funny;
-
-    Long difficulty;
-
-
-
-
+    public static UpdateReviewRequest of(Long postId, String postTitle, String postContent, Double starLating, Long userNumber) {
+        return new UpdateReviewRequest(
+                postId,
+                postTitle,
+                postContent,
+                starLating,
+                userNumber
+        );
+    }
 }
