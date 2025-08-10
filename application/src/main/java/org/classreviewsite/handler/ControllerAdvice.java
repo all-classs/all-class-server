@@ -96,5 +96,15 @@ public class ControllerAdvice {
         return new Result(403, null, "수강하지 않은 강의입니다.");
     }
 
+    @ExceptionHandler(value = InValidReviewAccessException.class)
+    protected Result InValidReviewAccessException(InValidReviewAccessException exception) {
+        return new Result(403, null, exception.getMessage());
+    }
+
+    @ExceptionHandler(value = EnrollmentNotFoundException.class)
+    protected Result EnrollmentNotFoundException(EnrollmentNotFoundException exception) {
+        return new Result(401, null, exception.getMessage());
+    }
+
 
 }
