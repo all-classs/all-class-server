@@ -8,14 +8,10 @@ import lombok.Data;
 public class LoginUserResponse {
 
     private String name;
-
     private String token;
-
     private String userKey;
-
 
     public static LoginUserResponse of( String name , String token , String userKey){
         return new LoginUserResponse( name, token, userKey);
     }
-
 }
