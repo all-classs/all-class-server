@@ -24,10 +24,6 @@ public class Enrollment {
     @Column(nullable = true, length = 45, unique = false)
     private String completionYear;
 
-    // 이수학년
-    @Column(nullable = true, length = 45, unique = false)
-    private String grade;
-
     // 이수학기
     @Column(nullable = true, length = 45, unique = false)
     private String semester;
@@ -46,4 +42,9 @@ public class Enrollment {
     @Column(nullable = true, length = 45, unique = false)
     private String professor;
 
+    public Enrollment(Long completionNumber, User user, Lecture lecture) {
+        this.completionNumber = completionNumber;
+        this.userNumber = user;
+        this.lecture = lecture;
+    }
 }
