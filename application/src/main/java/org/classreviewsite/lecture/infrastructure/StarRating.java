@@ -1,4 +1,4 @@
-package org.classreviewsite.review.infrastructure;
+package org.classreviewsite.lecture.infrastructure;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
