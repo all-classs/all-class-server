@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.classreviewsite.review.infrastructure.StarRating;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -43,6 +42,10 @@ public class Lecture {
 
     public void removeReview(Double starRating) {
         this.starRating.removeRating(starRating);
+    }
+
+    public void updateProfessorName(String professorName) {
+        this.professor = professorName;
     }
 
 }
