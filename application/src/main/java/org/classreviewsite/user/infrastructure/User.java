@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.classreviewsite.user.controller.data.request.CreateUserRequest;
 
 import java.util.Collections;
 import java.util.Set;
@@ -41,15 +40,4 @@ public class User {
             inverseJoinColumns = {@JoinColumn(name = "authority", referencedColumnName = "authority")}
     )
     private Set<Authority> authorities;
-
-    public static User toEntity(CreateUserRequest user, String password, Authority authority){
-        return User.builder()
-                .userNumber(user.getUserNumber())
-                .userName(user.getUserName())
-                .department(user.getDepartment())
-                .nickname(user.getNickname())
-                .authorities(Collections.singleton(authority))
-                .password(password)
-                .build();
-    }
 }

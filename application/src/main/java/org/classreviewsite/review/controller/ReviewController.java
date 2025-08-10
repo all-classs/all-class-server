@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.classreviewsite.common.Result;
-import org.classreviewsite.review.infrastructure.ClassReview;
+import org.classreviewsite.review.controller.data.Response.ReviewMeResponse;
 import org.classreviewsite.review.controller.data.Request.DeleteReviewRequest;
 import org.classreviewsite.review.controller.data.Request.LikeRequest;
 import org.classreviewsite.review.controller.data.Request.ClassReviewRequest;
@@ -77,6 +77,7 @@ public class ReviewController {
     @PatchMapping("/review")
     @Operation(summary = "수강 후기 수정 요청", description = "수강 후기 수정을 요청합니다. Long postId, String postTitle, String postContent, Double starLating, Long important, Long funny, Long difficulty 를 json에 담아서 body로 요청하시면 됩니다.")
     @ApiResponse(responseCode = "200", description = "수강후기 수정이 완료되었습니다.")
+    @ApiResponse(responseCode = "403", description = "작성하지 않은 사용자의 요청 입니다.")
     public Result updateReviewPost(@RequestBody UpdateReviewRequest request
     ){
         reviewService.updateReviewPost(request); // 수정쪽 예외 한번더 검토해야함
@@ -101,7 +102,7 @@ public class ReviewController {
     @ApiResponse(responseCode = "200",description = "해당 학생의 수강후기입니다.")
     @ApiResponse(responseCode = "202", description = "수강후기가 존재하지 않습니다.")
     public Result myReview(@RequestParam("userNumber") int userNumber){
-        List<ClassReview> response = reviewService.findMyReview(userNumber);
+        List<ReviewMeResponse> response = reviewService.findMyReview(userNumber);
         return new Result(200, response, "해당 학생의 수강후기입니다.");
     }
 

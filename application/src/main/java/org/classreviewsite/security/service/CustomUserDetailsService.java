@@ -18,7 +18,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserDataRepository userRepository;
 
-
     public CustomUserDetailsService(UserDataRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -34,7 +33,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     // user 객체 생성 메소드
     private org.springframework.security.core.userdetails.User createUser(String username, User user){
-
         List<GrantedAuthority> grantedAuthorities = user.getAuthorities().stream()
                 .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
                 .collect(Collectors.toList());

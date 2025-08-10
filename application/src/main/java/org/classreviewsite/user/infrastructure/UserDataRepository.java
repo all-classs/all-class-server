@@ -12,9 +12,6 @@ public interface UserDataRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUserNumber(@Param("userNumber") int userNumber);
 
-    User findByUserNumberAndPassword(@Param("userNumber") int userNumber , @Param("password") String password);
-
-
     @EntityGraph(attributePaths = "authorities")
     Optional<User> findOneWithAuthoritiesByUserNumber(int UserNumber);
 
