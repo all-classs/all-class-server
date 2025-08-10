@@ -1,8 +1,7 @@
 package org.classreviewsite.review.infrastructure;
 
 import org.classreviewsite.lecture.data.Lecture;
-import org.classreviewsite.review.data.ClassReview;
-import org.classreviewsite.user.data.User;
+import org.classreviewsite.user.infrastructure.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

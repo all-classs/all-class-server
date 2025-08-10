@@ -1,10 +1,9 @@
 package org.classreviewsite.domain;
 
-import org.assertj.core.api.Assertions;
 import org.classreviewsite.lecture.data.Lecture;
 import org.classreviewsite.lecture.data.LectureType;
-import org.classreviewsite.review.data.StarRating;
-import org.classreviewsite.review.dto.Request.ClassReviewRequest;
+import org.classreviewsite.review.infrastructure.StarRating;
+import org.classreviewsite.review.controller.data.Request.ClassReviewRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,7 @@ public class LectureTest {
 
     @BeforeEach
     void setUp() {
-        lecture = new Lecture(12345L, "강의명", StarRating.createRatingBuilder(), "학과명", "학교명", LectureType.교양선택);
+        lecture = new Lecture(12345L, "강의명", StarRating.createRatingBuilder(), "학과명", "학교명", "교수명", LectureType.교양선택);
     }
 
     @Test

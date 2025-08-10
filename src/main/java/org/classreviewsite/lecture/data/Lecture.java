@@ -5,8 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.classreviewsite.review.data.StarRating;
-import org.hibernate.annotations.ColumnDefault;
+import org.classreviewsite.review.infrastructure.StarRating;
 
 @NoArgsConstructor
 @AllArgsConstructor

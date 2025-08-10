@@ -1,7 +1,7 @@
 package org.classreviewsite.domain;
 
-import org.classreviewsite.review.data.StarRating;
-import org.classreviewsite.review.dto.Request.ClassReviewRequest;
+import org.classreviewsite.review.infrastructure.StarRating;
+import org.classreviewsite.review.controller.data.Request.ClassReviewRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

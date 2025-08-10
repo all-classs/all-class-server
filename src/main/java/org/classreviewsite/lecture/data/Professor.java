@@ -1,10 +1,8 @@
 package org.classreviewsite.lecture.data;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.classreviewsite.lecture.infrastructure.ImageUrl;
 
 @NoArgsConstructor
 @AllArgsConstructor

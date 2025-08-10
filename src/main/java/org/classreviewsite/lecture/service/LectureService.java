@@ -3,7 +3,7 @@ package org.classreviewsite.lecture.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.classreviewsite.lecture.data.Lecture;
-import org.classreviewsite.auth.exception.LectureNotFoundException;
+import org.classreviewsite.handler.exception.LectureNotFoundException;
 import org.classreviewsite.lecture.infrastructure.LectureDataRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

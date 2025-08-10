@@ -2,18 +2,16 @@ package org.classreviewsite.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.classreviewsite.auth.data.Authority;
-import org.classreviewsite.auth.exception.UserNotFoundException;
-import org.classreviewsite.auth.service.AuthService;
-import org.classreviewsite.user.dto.CreateUserRequest;
-import org.classreviewsite.user.data.User;
-import org.classreviewsite.auth.exception.UserExistException;
+import org.classreviewsite.user.infrastructure.Authority;
+import org.classreviewsite.handler.exception.UserNotFoundException;
+import org.classreviewsite.security.service.AuthService;
+import org.classreviewsite.user.controller.data.request.CreateUserRequest;
+import org.classreviewsite.user.infrastructure.User;
+import org.classreviewsite.handler.exception.UserExistException;
 import org.classreviewsite.user.infrastructure.UserDataRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @Slf4j

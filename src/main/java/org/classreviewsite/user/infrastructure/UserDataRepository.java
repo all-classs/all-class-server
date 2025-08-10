@@ -1,6 +1,5 @@
 package org.classreviewsite.user.infrastructure;
 
-import org.classreviewsite.user.data.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
