@@ -15,7 +15,7 @@ public class LikeService {
 
     private final LikesDataRepository likesDataRepository;
 
-    @Transactional
+    @Transactional(noRollbackFor = AlreadyLikeException.class)
     public void check(User user, ClassReview classReview){
         likesDataRepository.findByUserAndClassReview(user, classReview)
                 .ifPresent(m -> {
@@ -30,11 +30,20 @@ public class LikeService {
 
     @Transactional
     public void deleteByClassReviewAndUser(ClassReview classReview, User user){
+        if (classReview == null) {
+            throw new IllegalArgumentException("수강후기 객체가 잘못 전달되었습니다.");
+        }
+        if (user == null) {
+            throw new IllegalArgumentException("사용자 객체가 잘못 전달되었습니다.");
+        }
         likesDataRepository.deleteByClassReviewAndUser(classReview, user);
     }
 
     @Transactional
     public void deleteAllByClassReview(ClassReview classReview){
+        if (classReview == null) {
+            throw new IllegalArgumentException("수강후기 객체가 잘못 전달되었습니다.");
+        }
         likesDataRepository.deleteAllByClassReview(classReview);
     }
 
