@@ -50,7 +50,7 @@ public class ClassReview extends BaseTimeEntity {
         return this.likes;
     }
 
-    public void update(String postTitle, String postContent, Double starLating, Long important, Long difficulty, Long funny){
+    public void update(String postTitle, String postContent, Double starLating){
         this.postTitle = postTitle;
         this.postContent = postContent;
         this.starLating = starLating;
