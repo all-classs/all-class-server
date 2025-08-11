@@ -12,6 +12,10 @@ all-class 서버 구조도
 
 기술적 issue 해결 과정
 ---
+- [#1 도메인 클래스 중복 사용의 일관성을 어떻게 유지할까?](https://johnsnote.vercel.app/posts/2025-07-04)
+- [#2 실제 데이터구조에 맞춰 테이블 구조를 변경하는 과정](https://johnsnote.vercel.app/posts/2025-07-05)
+
+
 
 프로젝트 중점사항
 ---
