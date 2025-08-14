@@ -24,6 +24,7 @@ import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -62,7 +63,7 @@ class UserControllerTest {
         Authentication mockAuthentication = mock(Authentication.class);
         given(mockAuthentication.getName()).willReturn("20241234");
         Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-        given(mockAuthentication.getAuthorities()).willReturn(authorities);
+        doReturn(authorities).when(mockAuthentication).getAuthorities();
 
         // Mock AuthenticationManager 설정
         AuthenticationManager mockAuthManager = mock(AuthenticationManager.class);
@@ -136,6 +137,21 @@ class UserControllerTest {
         LoginUserRequest request = new LoginUserRequest();
         // userNumber와 password를 설정하지 않음
 
+        // Mock Authentication 객체 생성
+        Authentication mockAuthentication = mock(Authentication.class);
+        given(mockAuthentication.getName()).willReturn("null"); // null 값이 문자열로 변환됨
+        Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+        doReturn(authorities).when(mockAuthentication).getAuthorities();
+
+        // Mock AuthenticationManager 설정
+        AuthenticationManager mockAuthManager = mock(AuthenticationManager.class);
+        given(authenticationManagerBuilder.getObject()).willReturn(mockAuthManager);
+        given(mockAuthManager.authenticate(any())).willReturn(mockAuthentication);
+
+        // JWT 토큰 생성 Mock
+        String mockToken = "mock.jwt.token";
+        given(jwtTokenProvider.createToken(any(Authentication.class))).willReturn(mockToken);
+
         // When & Then
         mockMvc.perform(post("/signin")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -176,7 +192,7 @@ class UserControllerTest {
         Authentication mockAuthentication = mock(Authentication.class);
         given(mockAuthentication.getName()).willReturn("20241001");
         Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("STUDENT"));
-        given(mockAuthentication.getAuthorities()).willReturn(authorities);
+        doReturn(authorities).when(mockAuthentication).getAuthorities();
 
         // Mock AuthenticationManager 설정
         AuthenticationManager mockAuthManager = mock(AuthenticationManager.class);
