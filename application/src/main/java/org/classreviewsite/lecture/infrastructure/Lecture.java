@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.classreviewsite.common.util.NumberFormat;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -46,6 +47,10 @@ public class Lecture {
 
     public void updateProfessorName(String professorName) {
         this.professor = professorName;
+    }
+
+    public Double getAverageRating() {
+        return NumberFormat.format(this.starRating.getAverageRating());
     }
 
 }
