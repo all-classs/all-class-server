@@ -25,7 +25,7 @@ public class ClassListResponse {
                 lecture.getDepartment(),
                 lecture.getUniversity(),
                 lecture.getLectureType(),
-                NumberFormat.format(lecture.getStarRating().getAverageRating()),
+                lecture.getAverageRating(),
                 lecture.getProfessor()
         );
     }

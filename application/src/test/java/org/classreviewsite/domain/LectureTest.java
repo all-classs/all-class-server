@@ -7,6 +7,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Method;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 
@@ -234,6 +236,26 @@ public class LectureTest {
             assertThat(lecture.getStarRating().getReviewCount()).isEqualTo(3L);
             assertThat(lecture.getStarRating().getTotalRating()).isEqualTo(13.0);
             assertThat(lecture.getStarRating().getAverageRating()).isCloseTo(4.33, within(0.01));
+        }
+
+        // Lecture의 getAverageRating은 디미터법칙을 위반하지 않는지 검증
+        @Test
+        @DisplayName("Lecture의 getAverageRating은 2개이상의 chainedCall을 false를 반환한다.")
+        void getStarLating() throws NoSuchMethodException {
+            // given
+            Lecture lecture = new Lecture(1L, "자바프로그래밍", StarRating.createRatingBuilder(),
+                    "소프트웨어학과", "한국대학교", "김교수", LectureType.전공필수);
+            Method method = Lecture.class.getMethod("getAverageRating");
+            String code = method.toString();
+
+            // when
+            Double averageRating = lecture.getAverageRating();
+            boolean hasChainedCall = code.contains("getStarRating().getAverageRating()");
+
+            // then
+            assertThat(averageRating).isEqualTo(lecture.getStarRating().getAverageRating());
+            assertThat(averageRating.getClass()).isNotEqualTo(StarRating.class);
+            assertThat(hasChainedCall).isFalse();
         }
     }
 }
