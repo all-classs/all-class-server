@@ -12,12 +12,12 @@ all-class 서버 구조도
 
 기술적 issue 해결 과정
 ---
-- [#1] 도메인 클래스 중복 사용의 일관성을 어떻게 유지할까?
-https://johnsnote.vercel.app/posts/2025-07-04
-- [#2] 실제 데이터구조에 맞춰 테이블 구조를 변경하는 과정
-  https://johnsnote.vercel.app/posts/2025-07-05
+- [#1] 전체 후기 조회시 N+1로 응답하는 쿼리 해결하기
+- [#2] Service 로직을 간결하게 만들기 위한 Embeddable 적용 과정  
 - [#3] 도메인 클래스 중복 사용의 일관성을 어떻게 유지할까?
+  https://johnsnote.vercel.app/posts/2025-07-04
 - [#4] 실제 데이터구조에 맞춰 데이터 구조를 변경하는 과정
+ https://johnsnote.vercel.app/posts/2025-07-05
 - [#5] 스프링 배치를 통해 데이터 읽어 주입하기
 - [#6] 기존로직을 검증하며 점진적으로 리팩터링하는 과정
 - [#7] Open AI API IO 에러 디버깅 과정
