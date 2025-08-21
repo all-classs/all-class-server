@@ -32,15 +32,10 @@ https://johnsnote.vercel.app/posts/service-logic-simple
 https://johnsnote.vercel.app/posts/nplusone
 
 
-프로젝트 중점사항
----
-
-
-
 DB ERD
 ---
 
-<img width="1314" height="951" alt="image" src="https://github.com/user-attachments/assets/55e293df-1197-463d-a38d-1e2e6ab0c655" />
+<img width="1314" height="951" alt="image" src="https://raw.githubusercontent.com/all-classs/all-class-server/refs/heads/main/images/erd.png" />
 
 Use Case
 ---
