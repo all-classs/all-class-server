@@ -1,6 +1,7 @@
 all-class 서버 구조도
 ---
 
+![image](https://raw.githubusercontent.com/all-classs/all-class-server/refs/heads/main/images/architecture.png)
 
 프로젝트 목표
 ---
