@@ -1,7 +1,8 @@
 all-class 서버 구조도
 ---
 
-<img width="684" height="937" alt="image" src="https://github.com/user-attachments/assets/82637c7e-9f3e-45e2-9b3b-9f342e7e185f" />
+<img width="990" height="860" alt="image" src="https://github.com/user-attachments/assets/ec15a5aa-c3c6-4737-9848-2d92035186b0" />
+
 
 프로젝트 목표
 ---
