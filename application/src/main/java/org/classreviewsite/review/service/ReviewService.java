@@ -124,9 +124,12 @@ public class ReviewService {
         final var likedReviewId = request.getPostId();
 
         User user = userService.findUser(Long.valueOf(userNumber));
+
         ClassReview classReview = reviewDataService.getReviewById(likedReviewId);
 
-        switch (likeUserService.isLiked(user, classReview)) {
+        final LikedStatus liked = likeUserService.isLiked(user, classReview);
+
+        switch (liked) {
             case ALREADY_LIKE:
                 return "좋아요가 취소되었습니다.";
             case POSSIBLE_LIKE:
