@@ -13,7 +13,6 @@ import org.classreviewsite.user.infrastructure.User;
 import org.classreviewsite.review.controller.data.Request.LikeRequest;
 import org.classreviewsite.review.controller.data.Request.ClassReviewRequest;
 import org.classreviewsite.review.controller.data.Request.UpdateReviewRequest;
-import org.classreviewsite.review.infrastructure.ClassReviewDataRepository;
 import org.classreviewsite.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
