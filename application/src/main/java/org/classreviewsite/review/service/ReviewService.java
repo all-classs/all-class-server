@@ -128,9 +128,9 @@ public class ReviewService {
 
         switch (likeUserService.isLiked(user, classReview)) {
             case ALREADY_LIKE:
-                return "좋아요가 추가되었습니다.";
-            case POSSIBLE_LIKE:
                 return "좋아요가 취소되었습니다.";
+            case POSSIBLE_LIKE:
+                return "좋아요가 추가되었습니다.";
             default:
                 return "좋아요 처리 중 문제가 발생했습니다.";
         }
