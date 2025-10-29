@@ -28,7 +28,7 @@ public class ReviewDataService {
 
     @Transactional(readOnly = true)
     public ClassReview getReviewById(Long reviewId) {
-        return classReviewDataRepository.findById(reviewId).orElseThrow(() -> new NoSuchElementException("해당 수강후기가 존재하지 않습니다."));
+        return classReviewDataRepository.findById(reviewId).orElseThrow(() -> new ReviewNotFoundException("해당 수강후기가 존재하지 않습니다."));
     }
 
     public void save(ClassReview review){
