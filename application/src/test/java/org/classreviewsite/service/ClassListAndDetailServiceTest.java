@@ -3,7 +3,7 @@ package org.classreviewsite.service;
 import org.classreviewsite.handler.exception.LectureNotFoundException;
 import org.classreviewsite.lecture.infrastructure.ImageUrl;
 import org.classreviewsite.review.controller.data.Response.ClassListWithProfessorResponse;
-import org.classreviewsite.review.service.ClassListService;
+import org.classreviewsite.review.service.ClassListAndDetailService;
 import org.classreviewsite.lecture.infrastructure.Lecture;
 import org.classreviewsite.lecture.infrastructure.LectureType;
 import org.classreviewsite.lecture.infrastructure.LectureDataRepository;
@@ -22,9 +22,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-public class ClassListServiceTest {
+public class ClassListAndDetailServiceTest {
 
-    @InjectMocks ClassListService classListService;
+    @InjectMocks
+    ClassListAndDetailService classListAndDetailService;
     @Mock LectureDataRepository lectureDataRepository;
 
     @Nested
@@ -42,7 +43,7 @@ public class ClassListServiceTest {
             given(lectureDataRepository.findByLectureId(1L)).willReturn(Optional.of(lecture));
 
             // when
-            ClassListWithProfessorResponse.ClassListWithProfessorNameInDetail result = classListService.detail(1L);
+            ClassListWithProfessorResponse.ClassListWithProfessorNameInDetail result = classListAndDetailService.detail(1L);
 
             // then
             assertThat(result.getLectureName()).isEqualTo(data.getLectureName());
@@ -64,7 +65,7 @@ public class ClassListServiceTest {
 //            given(lectureDataRepository.findByLectureId(id)).willReturn(Optional.of())
 
             org.junit.jupiter.api.Assertions.assertThrows(LectureNotFoundException.class, () -> {
-                classListService.detail(id);
+                classListAndDetailService.detail(id);
             });
         }
 
@@ -76,7 +77,7 @@ public class ClassListServiceTest {
 
             given(lectureDataRepository.findByLectureId(1L)).willReturn(Optional.of(lecture));
 
-            ClassListWithProfessorResponse.ClassListWithProfessorNameInDetail result = classListService.detail(1L);
+            ClassListWithProfessorResponse.ClassListWithProfessorNameInDetail result = classListAndDetailService.detail(1L);
 
             assertThat(result.getProfessor()).isNotNull();
         }
@@ -91,7 +92,7 @@ public class ClassListServiceTest {
             given(lectureDataRepository.findByLectureId(1L)).willReturn(Optional.of(lecture));
 
             // when
-            ClassListWithProfessorResponse.ClassListWithProfessorNameInDetail result = classListService.detail(1L);
+            ClassListWithProfessorResponse.ClassListWithProfessorNameInDetail result = classListAndDetailService.detail(1L);
 
             // then
             assertThat(result).isNotNull();

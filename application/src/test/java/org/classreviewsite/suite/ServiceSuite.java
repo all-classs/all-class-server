@@ -6,11 +6,11 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({
-        ClassListServiceTest.class,
-        EnrollmentServiceTest.class,
+        ClassListAndDetailServiceTest.class,
+        EnrollmentDataServiceTest.class,
         ImageUrlServiceTest.class,
         LectureDataServiceTest.class,
-        LikeServiceTest.class,
+        LikeDataServiceTest.class,
         ReviewServiceTest.class,
         UserServiceTest.class
 })
