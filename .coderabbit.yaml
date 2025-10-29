@@ -1,6 +1,9 @@
-
+review_prompt: |
+  이 코드를 한국어로 리뷰해 주세요.
+  코드 스타일, 버그 가능성, 가독성 등을 포함해서 피드백을 작성해 주세요.
+  
 review:
-  enable_auto_review: true
+  enable_auto_review: false
   comment_mode: comments             
   languages: ["java", "kotlin", "yaml", "properties"]
   max_comments: 40
