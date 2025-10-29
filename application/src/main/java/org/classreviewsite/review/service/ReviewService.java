@@ -1,185 +1,154 @@
 package org.classreviewsite.review.service;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.classreviewsite.handler.exception.*;
 import org.classreviewsite.lecture.infrastructure.Lecture;
-import org.classreviewsite.lecture.service.EnrollmentService;
+import org.classreviewsite.lecture.service.EnrollmentDataService;
+import org.classreviewsite.lecture.service.LectureDataService;
 import org.classreviewsite.review.controller.data.Response.ReviewMeResponse;
-import org.classreviewsite.review.infrastructure.Likes;
 import org.classreviewsite.review.infrastructure.ClassReview;
 import org.classreviewsite.review.controller.data.Request.DeleteReviewRequest;
 import org.classreviewsite.review.controller.data.Response.ReviewResponse;
 import org.classreviewsite.user.infrastructure.User;
-import org.classreviewsite.lecture.service.LectureDataService;
 import org.classreviewsite.review.controller.data.Request.LikeRequest;
 import org.classreviewsite.review.controller.data.Request.ClassReviewRequest;
 import org.classreviewsite.review.controller.data.Request.UpdateReviewRequest;
 import org.classreviewsite.review.infrastructure.ClassReviewDataRepository;
-import org.classreviewsite.review.infrastructure.LikesDataRepository;
 import org.classreviewsite.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
 
-    private final ClassReviewDataRepository classReviewDataRepository;
-
-    private final LikesDataRepository likesDataRepository;
+    private final ReviewDataService reviewDataService;
 
     private final LectureDataService lectureDataService;
 
     private final UserService userService;
 
-    private final LikeService likeService;
+    private final LikeDataService likeDataService;
 
-    private final EnrollmentService enrollmentService;
+    private final LikeUserService likeUserService;
 
-    private final EntityManager em;
+    private final EnrollmentDataService enrollmentDataService;
+
 
     @Transactional(readOnly = true)
-    public ClassReview findById(Long id){
-        return classReviewDataRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 수강후기가 존재하지 않습니다."));
-    }
+    public List<ReviewResponse> findAll(final Long lectureId){
 
-    public ClassReview findByReviewIdAndUserNumber(Long reviewId, User userNumber){
-        return classReviewDataRepository.findByReviewIdAndUserNumber(reviewId, userNumber).orElseThrow(() -> new NullPointerException("해당 수강후기가 존재하지 않습니다."));
+        List<ClassReview> reviews = reviewDataService.getAll(lectureId);
+
+        validateReviewsExist(reviews);
+
+        return reviews.stream().map(ReviewResponse::from).toList();
     }
 
     @Transactional
-    public void deleteById(Long id){
-        classReviewDataRepository.deleteById(id);
-    }
+    public void addReviewPost(final ClassReviewRequest request){
+        final var userNumber = request.getUserNumber();
+        final var lectureName = request.getLectureName();
 
-    @Transactional(readOnly = true)
-    public List<ReviewResponse> findAll(Long lectureId){
-        List<ClassReview> list = classReviewDataRepository.findAll(lectureId);
-        if(list.isEmpty()){
-            throw new ReviewNotFoundException("수강 후기가 어디에도 없습니다.");
-        }
-        return list.stream().map(ReviewResponse::from).toList();
-    }
+        noPermissionCheck(userNumber.intValue(), lectureName); // 수강한 강의인지 확인
 
-    @Transactional
-    public void addReviewPost(ClassReviewRequest request){
+        Lecture foundLecture = lectureDataService.findByLectureName(lectureName);
 
-        noPermissionCheck(request.getUserNumber().intValue(), request.getLectureName()); // 수강한 강의인지 확인
-
-        Lecture foundLecture = lectureDataService.findByLectureName(request.getLectureName());
-
-        User foundUser = userService.get(request.getUserNumber());
-
-        ClassReview classReview = ClassReview.create(
-                foundLecture,
-                foundUser,
-                request.getStarLating(),
-                0,
-                request.getPostContent(),
-                request.getPostTitle()
-        );
-
+        User foundUser = userService.findUser(userNumber);
 
         validateCheckPost(foundUser, foundLecture);
-        foundLecture.addReview(request.getStarLating());
-        classReviewDataRepository.save(classReview);
 
-        em.flush();
-        em.clear();
+        ClassReview classReview = ClassReview.create(foundLecture, foundUser, request.getStarLating(), request.getPostContent(), request.getPostTitle());
+
+        reviewDataService.save(classReview);
+
+        foundLecture.addStarRating(request.getStarLating());
+
     }
 
     @Transactional(readOnly = true)
-    public void noPermissionCheck(int userNumber, String lectureName) {
-        enrollmentService.findByUserNumber(userNumber, lectureName);
+    public void noPermissionCheck(final int userNumber,final String lectureName) {
+        enrollmentDataService.findByUserNumber(userNumber, lectureName);
     }
 
 
     @Transactional(readOnly = true)
-    public void validateCheckPost(User user, Lecture lecture){
-       classReviewDataRepository.findByUserNumberAndLecId(user, lecture)
+    public void validateCheckPost(final User user,final Lecture lecture){
+       reviewDataService.getReviewByUserNumberAndLectureId(user, lecture)
                .ifPresent(m -> {
                    throw new AlreadyWritePostException("이미 작성한 강의입니다.");
                });
     }
 
     @Transactional
-    public Long updateReviewPost(UpdateReviewRequest request){
+    public Long updateReviewPost(final UpdateReviewRequest request){
 
-        ClassReview post = classReviewDataRepository.findById(request.getPostId()).orElseThrow(
-                () -> new ReviewNotFoundException("해당 수강후기가 존재하지 않습니다.")
-        );
+        ClassReview post = reviewDataService.getReviewById(request.getPostId());
 
-        if(request.getUserNumber() != post.getUserNumber().getUserNumber()) {
-            throw new InValidReviewAccessException("작성하지 않은 사용자의 요청입니다.");
-        }
+        validateCheckReviewAccess(request.getUserNumber().intValue(), post.getUserNumber().getUserNumber());
 
         post.update(request.getPostTitle(), request.getPostContent(), request.getStarLating());
 
         // 별점 수정
-        post.getLecId().removeReview(post.getStarLating());
-        post.getLecId().addReview(request.getStarLating());
-
-        em.flush();
-        em.clear();
+        Lecture lecture = post.getLecId();
+        lecture.updateStarRating(post.getStarLating(), request.getStarLating());
 
         return post.getReviewId();
     }
 
+    private void validateCheckReviewAccess(final int requestUserNumber, final int postedUserNumber) {
+        if(requestUserNumber != postedUserNumber) {
+            throw new InValidReviewAccessException("작성하지 않은 사용자의 요청입니다.");
+        }
+    }
+
     @Transactional
     public void deleteReviewPost(DeleteReviewRequest request){
-        User user = userService.get(Long.valueOf(request.getUserNumber()));
+        User user = userService.findUser(Long.valueOf(request.getUserNumber()));
 
-        ClassReview deletedClassReview = findByReviewIdAndUserNumber(request.getPostId(), user);
+        ClassReview deletedClassReview = reviewDataService.findByReviewIdAndUserNumber(request.getPostId(), user);
 
-        likeService.deleteAllByClassReview(deletedClassReview);
-        deleteById(request.getPostId());
+        likeDataService.deleteAllByClassReview(deletedClassReview);
 
-        Lecture updateLecture = lectureDataService.findById(deletedClassReview.getLecId().getLectureId());
+        deletedClassReview.getLecId().removeStarRating(deletedClassReview.getStarLating());
 
-        updateLecture.removeReview(deletedClassReview.getStarLating());
-        em.flush();
-        em.clear();
+        reviewDataService.deleteById(request.getPostId());
+
     }
 
     @Transactional
     public String likeReview(LikeRequest request){
+        final var userNumber = request.getUserNumber();
+        final var likedReviewId = request.getPostId();
 
-        User user = userService.get(Long.valueOf(request.getUserNumber()));
-        ClassReview classReview = findById(request.getPostId());
+        User user = userService.findUser(Long.valueOf(userNumber));
+        ClassReview classReview = reviewDataService.getReviewById(likedReviewId);
 
-        // 좋아요 중복 체크
-        boolean alreadyLiked = likesDataRepository.findByUserAndClassReview(user, classReview).isPresent();
-        
-        if (alreadyLiked) {
-            // 좋아요 취소
-            classReview.like(classReview.getLikes()-1);
-            likeService.deleteByClassReviewAndUser(classReview, user);
-            return "좋아요가 취소되었습니다.";
-        } else {
-            // 좋아요 추가
-            classReview.like();
-            Likes like = Likes.toEntity(classReview, user);
-            likeService.save(like);
-            return "좋아요가 추가되었습니다.";
+        switch (likeUserService.isLiked(user, classReview)) {
+            case ALREADY_LIKE:
+                return "좋아요가 추가되었습니다.";
+            case POSSIBLE_LIKE:
+                return "좋아요가 취소되었습니다.";
+            default:
+                return "좋아요 처리 중 문제가 발생했습니다.";
         }
     }
 
     @Transactional(readOnly = true)
     public List<ReviewMeResponse> findMyReview(int userNumber){
-        List<ClassReview> list = classReviewDataRepository.findByUserNumber(userNumber);
-        if(list.isEmpty()){
-            throw new ReviewNotFoundException("수강후기가 존재하지 않습니다.");
-        }
 
-        return list.stream().map(ReviewMeResponse::from).toList();
+        List<ClassReview> reviews = reviewDataService.getReviewsByUserNumber(userNumber);
+
+        validateReviewsExist(reviews);
+
+        return reviews.stream().map(ReviewMeResponse::from).toList();
     }
 
     @Transactional(readOnly = true)
     public List<ReviewResponse> findByLectureIdOrderByStarLatingDesc(Long lectureId){
+
         Lecture lecture = lectureDataService.findById(lectureId);
 
         List<ClassReview> result = classReviewDataRepository.findAllByLecIdOrderByStarLatingDesc(lecture);// desc
@@ -230,5 +199,12 @@ public class ReviewService {
         }
 
         return result.stream().map(ReviewResponse::from).toList();
+    }
+
+
+    private void validateReviewsExist(List<ClassReview> reviews) {
+        if (reviews.isEmpty()) {
+            throw new ReviewNotFoundException("수강 후기가 존재하지 않습니다.");
+        }
     }
 }
