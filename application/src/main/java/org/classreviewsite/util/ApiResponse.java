@@ -1,4 +1,4 @@
-package org.classreviewsite.common;
+package org.classreviewsite.util;
 
 import lombok.Getter;
 import lombok.ToString;
