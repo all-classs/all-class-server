@@ -27,12 +27,12 @@ public class UserController {
 
     @PostMapping(value = "/signin", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "로그인 요청", description = "로그인을 요청합니다.")
-    @ApiResponse(responseCode = "200", description = "로그인을 성공하였습니다.")
-    @ApiResponse(responseCode = "401", description = "학번은 8자리입니다.")
-    @ApiResponse(responseCode = "401", description = "아이디 및 비밀번호를 확인해주세요")
-    public ApiResponses signIn(@Parameter(required = true, description = "학번, 비밀번호 요청") @RequestBody LoginUserRequest dto, HttpServletResponse response){
-        LoginUserResponse loginResponse = userService.signIn(dto);
-        return ApiResponses.success(loginResponse, "로그인을 성공하였습니다.");
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "로그인을 성공하였습니다.")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "학번은 8자리입니다.")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "아이디 및 비밀번호를 확인해주세요")
+    public ApiResponse signIn(@Parameter(required = true, description = "학번, 비밀번호 요청") @RequestBody LoginUserRequest dto, HttpServletResponse response){
+        LoginUserResponse loginResponse = userSignInService.signIn(dto);
+        return ApiResponse.success(loginResponse, "로그인을 성공하였습니다.");
     }
 
 }
