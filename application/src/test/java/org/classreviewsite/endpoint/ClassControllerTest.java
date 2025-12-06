@@ -1,5 +1,6 @@
 package org.classreviewsite.endpoint;
 
+import org.classreviewsite.domain.lecture.LectureType;
 import org.classreviewsite.lecture.controller.ClassController;
 import org.classreviewsite.lecture.controller.data.response.EnrollmentResponse;
 import org.classreviewsite.lecture.service.EnrollmentDataService;
@@ -267,21 +268,42 @@ class ClassControllerTest {
 
     // 헬퍼 메서드들
     private ClassListResponse createMockClassListResponse(Long lectureId, String lectureName) {
-        // ClassListResponse 객체를 생성하는 헬퍼 메서드
-        // 실제 구현은 ClassListResponse의 생성자나 팩토리 메서드에 따라 달라집니다
-        return null; // 실제로는 적절한 객체를 반환해야 합니다
+        return new ClassListResponse(
+            lectureId,
+            lectureName,
+            "소프트웨어학과",
+            "한국대학교",
+            LectureType.전공필수,
+            4.5,
+            "김교수"
+        );
     }
     
     private ClassListWithProfessorResponse.ClassListWithProfessorNameInDetail createMockClassDetailResponse(
             Long lectureId, String lectureName, String professor) {
-        // ClassListWithProfessorNameInDetail 객체를 생성하는 헬퍼 메서드
-        // 실제 구현은 해당 클래스의 생성자나 팩토리 메서드에 따라 달라집니다
-        return null; // 실제로는 적절한 객체를 반환해야 합니다
+        return ClassListWithProfessorResponse.ClassListWithProfessorNameInDetail.builder()
+                .lectureId(lectureId)
+                .lectureName(lectureName)
+                .averageStarLating(4.5)
+                .totalStarLating(9.0)
+                .reviewCount(2L)
+                .department("소프트웨어학과")
+                .university("한국대학교")
+                .lectureType(LectureType.전공필수)
+                .professor(professor)
+                .introduction("강의 소개")
+                .profileImage("image.jpg")
+                .build();
     }
     
-    private EnrollmentResponse createMockEnrollmentResponse(Long completionNumber, String lectureName) {
-        // EnrollmentResponse 객체를 생성하는 헬퍼 메서드
-        // 실제 구현은 EnrollmentResponse의 생성자나 팩토리 메서드에 따라 달라집니다
-        return null; // 실제로는 적절한 객체를 반환해야 합니다
+    private EnrollmentResponse createMockEnrollmentResponse(Long classNumber, String lectureName) {
+        return EnrollmentResponse.builder()
+                .classNumber(classNumber)
+                .lectureName(lectureName)
+                .professorName("김교수")
+                .semester("1학기")
+                .CompletionType("전공필수")
+                .CompletionYear("2023")
+                .build();
     }
 }
