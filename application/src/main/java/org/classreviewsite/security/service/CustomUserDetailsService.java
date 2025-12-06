@@ -1,7 +1,7 @@
 package org.classreviewsite.security.service;
 
-import org.classreviewsite.user.infrastructure.User;
-import org.classreviewsite.user.infrastructure.UserDataRepository;
+import org.classreviewsite.domain.user.User;
+import org.classreviewsite.domain.user.UserDataRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

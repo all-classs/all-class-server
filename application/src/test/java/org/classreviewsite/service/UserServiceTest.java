@@ -1,9 +1,9 @@
 package org.classreviewsite.service;
 
 import org.classreviewsite.handler.exception.UserNotFoundException;
-import org.classreviewsite.user.infrastructure.Authority;
-import org.classreviewsite.user.infrastructure.User;
-import org.classreviewsite.user.infrastructure.UserDataRepository;
+import org.classreviewsite.domain.user.Authority;
+import org.classreviewsite.domain.user.User;
+import org.classreviewsite.domain.user.UserDataRepository;
 import org.classreviewsite.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

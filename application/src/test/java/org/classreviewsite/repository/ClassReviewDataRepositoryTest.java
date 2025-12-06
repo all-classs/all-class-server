@@ -1,11 +1,11 @@
 package org.classreviewsite.repository;
 
-import org.classreviewsite.lecture.infrastructure.Lecture;
-import org.classreviewsite.lecture.infrastructure.LectureType;
-import org.classreviewsite.lecture.infrastructure.StarRating;
-import org.classreviewsite.review.infrastructure.ClassReview;
-import org.classreviewsite.review.infrastructure.ClassReviewDataRepository;
-import org.classreviewsite.user.infrastructure.User;
+import org.classreviewsite.domain.lecture.Lecture;
+import org.classreviewsite.domain.lecture.LectureType;
+import org.classreviewsite.domain.lecture.StarRating;
+import org.classreviewsite.domain.review.ClassReview;
+import org.classreviewsite.domain.review.ClassReviewDataRepository;
+import org.classreviewsite.domain.user.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

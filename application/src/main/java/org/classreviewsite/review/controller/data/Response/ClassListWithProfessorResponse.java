@@ -3,9 +3,9 @@ package org.classreviewsite.review.controller.data.Response;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.classreviewsite.common.util.NumberFormat;
-import org.classreviewsite.lecture.infrastructure.Lecture;
-import org.classreviewsite.lecture.infrastructure.LectureType;
+import org.classreviewsite.domain.util.NumberFormat;
+import org.classreviewsite.domain.lecture.Lecture;
+import org.classreviewsite.domain.lecture.LectureType;
 
 import java.util.List;
 import java.util.stream.Collectors;

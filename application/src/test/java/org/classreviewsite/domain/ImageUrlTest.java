@@ -1,6 +1,6 @@
 package org.classreviewsite.domain;
 
-import org.classreviewsite.lecture.infrastructure.ImageUrl;
+import org.classreviewsite.domain.lecture.ImageUrl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

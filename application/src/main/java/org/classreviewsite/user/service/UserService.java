@@ -3,8 +3,8 @@ package org.classreviewsite.user.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.classreviewsite.handler.exception.UserNotFoundException;
-import org.classreviewsite.user.infrastructure.User;
-import org.classreviewsite.user.infrastructure.UserDataRepository;
+import org.classreviewsite.domain.user.User;
+import org.classreviewsite.domain.user.UserDataRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

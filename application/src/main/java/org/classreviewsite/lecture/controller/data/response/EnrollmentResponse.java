@@ -2,19 +2,24 @@ package org.classreviewsite.lecture.controller.data.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import org.classreviewsite.lecture.infrastructure.Enrollment;
+import lombok.Getter;
+import org.classreviewsite.domain.lecture.Enrollment;
 
-@Data
+@Getter
 @AllArgsConstructor
 @Builder
 public class EnrollmentResponse {
 
     private String CompletionYear;
+
     private String CompletionType;
+
     private String semester;
+
     private Long classNumber;
+
     private String lectureName;
+
     private String professorName;
 
     public static EnrollmentResponse from(Enrollment enrollment){

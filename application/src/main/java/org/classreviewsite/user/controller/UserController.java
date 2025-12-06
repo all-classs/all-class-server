@@ -2,12 +2,12 @@ package org.classreviewsite.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.classreviewsite.common.ApiResponses;
+import org.classreviewsite.security.service.UserSignInService;
+import org.classreviewsite.util.ApiResponse;
 import org.classreviewsite.user.controller.data.request.LoginUserRequest;
 import org.classreviewsite.user.controller.data.response.LoginUserResponse;
 import org.classreviewsite.user.service.UserService;

@@ -1,8 +1,8 @@
 package org.classreviewsite.domain;
 
-import org.classreviewsite.lecture.infrastructure.Lecture;
-import org.classreviewsite.lecture.infrastructure.LectureType;
-import org.classreviewsite.lecture.infrastructure.StarRating;
+import org.classreviewsite.domain.lecture.Lecture;
+import org.classreviewsite.domain.lecture.LectureType;
+import org.classreviewsite.domain.lecture.StarRating;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

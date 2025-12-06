@@ -2,17 +2,15 @@ package org.classreviewsite.review.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.classreviewsite.common.ApiResponses;
+import org.classreviewsite.util.ApiResponse;
 import org.classreviewsite.review.controller.data.Response.ReviewMeResponse;
 import org.classreviewsite.review.controller.data.Request.DeleteReviewRequest;
 import org.classreviewsite.review.controller.data.Request.LikeRequest;
 import org.classreviewsite.review.controller.data.Request.ClassReviewRequest;
 import org.classreviewsite.review.controller.data.Request.UpdateReviewRequest;
-import org.classreviewsite.review.controller.data.Response.ReviewResponse;
 import org.classreviewsite.review.service.ReviewService;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;

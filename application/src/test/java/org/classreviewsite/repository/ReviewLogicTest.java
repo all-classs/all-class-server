@@ -1,17 +1,16 @@
 package org.classreviewsite.repository;
 
 import jakarta.persistence.EntityManager;
-import org.classreviewsite.lecture.infrastructure.Lecture;
-import org.classreviewsite.lecture.infrastructure.LectureDataRepository;
+import org.classreviewsite.domain.lecture.Lecture;
+import org.classreviewsite.domain.lecture.LectureDataRepository;
+import org.classreviewsite.domain.review.ClassReviewDataRepository;
 import org.classreviewsite.review.controller.data.Request.ClassReviewRequest;
-import org.classreviewsite.review.infrastructure.ClassReview;
-import org.classreviewsite.review.infrastructure.ClassReviewDataRepository;
-import org.classreviewsite.user.infrastructure.User;
-import org.classreviewsite.user.infrastructure.UserDataRepository;
+import org.classreviewsite.domain.review.ClassReview;
+import org.classreviewsite.domain.user.User;
+import org.classreviewsite.domain.user.UserDataRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
 

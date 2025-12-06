@@ -7,7 +7,6 @@ import org.classreviewsite.review.controller.data.Request.DeleteReviewRequest;
 import org.classreviewsite.review.controller.data.Request.LikeRequest;
 import org.classreviewsite.review.controller.data.Request.UpdateReviewRequest;
 import org.classreviewsite.review.controller.data.Response.ReviewMeResponse;
-import org.classreviewsite.review.controller.data.Response.ReviewResponse;
 import org.classreviewsite.review.service.ReviewService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

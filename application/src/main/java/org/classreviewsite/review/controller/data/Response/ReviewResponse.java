@@ -3,8 +3,8 @@ package org.classreviewsite.review.controller.data.Response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.classreviewsite.common.util.NumberFormat;
-import org.classreviewsite.review.infrastructure.ClassReview;
+import org.classreviewsite.domain.util.NumberFormat;
+import org.classreviewsite.domain.review.ClassReview;
 import org.classreviewsite.user.controller.data.response.UserResponse;
 
 @Data

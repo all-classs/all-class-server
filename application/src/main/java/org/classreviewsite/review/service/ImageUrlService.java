@@ -1,8 +1,8 @@
 package org.classreviewsite.review.service;
 
 import lombok.RequiredArgsConstructor;
-import org.classreviewsite.lecture.infrastructure.ImageUrl;
-import org.classreviewsite.review.infrastructure.ImageUrlDataRepository;
+import org.classreviewsite.domain.lecture.ImageUrl;
+import org.classreviewsite.domain.lecture.ImageUrlDataRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package org.classreviewsite.util;
 
 import org.assertj.core.api.Assertions;
-import org.classreviewsite.common.util.NumberFormat;
+import org.classreviewsite.domain.util.NumberFormat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

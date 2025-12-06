@@ -1,10 +1,10 @@
 package org.classreviewsite.service;
 
 import org.classreviewsite.handler.exception.LectureNotFoundException;
-import org.classreviewsite.lecture.infrastructure.Lecture;
-import org.classreviewsite.lecture.infrastructure.LectureDataRepository;
-import org.classreviewsite.lecture.infrastructure.LectureType;
-import org.classreviewsite.lecture.infrastructure.StarRating;
+import org.classreviewsite.domain.lecture.Lecture;
+import org.classreviewsite.domain.lecture.LectureDataRepository;
+import org.classreviewsite.domain.lecture.LectureType;
+import org.classreviewsite.domain.lecture.StarRating;
 import org.classreviewsite.lecture.service.LectureDataService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
