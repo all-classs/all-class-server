@@ -5,9 +5,10 @@ import org.classreviewsite.domain.lecture.ImageUrl;
 import org.classreviewsite.domain.lecture.ImageUrlDataRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-
+/**
+ * @see 현재 문제점.
+ * ImageUrl이 사용되지 않고있다. 삭제권장.
+ */
 @Service
 @RequiredArgsConstructor
 public class ImageUrlService {
