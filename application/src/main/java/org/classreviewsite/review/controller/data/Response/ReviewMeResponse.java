@@ -11,13 +11,13 @@ import org.classreviewsite.domain.review.ClassReview;
 @AllArgsConstructor
 @Slf4j
 public class ReviewMeResponse {
-    private Long postId;
+    private Long reviewId;
     private String postTitle;
     private String postContent;
     private Double starLating;
     private Integer likes;
     private String createDate;
-    private Lecture lecture;
+    private String lectureName;
 
     public static ReviewMeResponse from(ClassReview classReview){
         return new ReviewMeResponse(
