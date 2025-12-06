@@ -1,6 +1,6 @@
 package org.classreviewsite.domain;
 
-import org.classreviewsite.user.infrastructure.Authority;
+import org.classreviewsite.domain.user.Authority;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
