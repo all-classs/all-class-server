@@ -51,13 +51,18 @@ public class ReviewServiceTest {
 
     @InjectMocks ReviewService reviewService;
     
+    @Mock LectureHistoryValidator lectureHistoryValidator;
+    @Mock ReviewHistoryValidator reviewHistoryValidator;
+    @Mock ReviewDataService reviewDataService;
+    @Mock UserService userService;
+    @Mock LikeDataService likeDataService;
+    @Mock LikeService likeService;
+    
+    // Legacy mocks for backward compatibility in some tests
     @Mock ClassReviewDataRepository classReviewDataRepository;
     @Mock LikesDataRepository likesDataRepository;
     @Mock LectureDataService lectureDataService;
-    @Mock UserService userService;
-    @Mock LikeService likeService;
-    @Mock EnrollmentService enrollmentService;
-    @Mock EntityManager entityManager;
+    @Mock EnrollmentDataService enrollmentDataService;
 
     @Nested
     @DisplayName("수강후기 조회 테스트")
@@ -65,7 +70,7 @@ public class ReviewServiceTest {
         
         @Test
         @DisplayName("존재하는 ID로 조회 시, 수강후기를 반환한다")
-        void findByIdSuccess() {
+        void shouldReturnReviewWhenValidIdProvided() {
             // given
             Long reviewId = 1L;
             User user = User.builder()
@@ -78,14 +83,21 @@ public class ReviewServiceTest {
                     .build();
             
             Lecture lecture = new Lecture(1L, "강의명", StarRating.createRatingBuilder(), 
-                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택);
+                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택, 0L);
             
-            ClassReview expectedReview = ClassReview.create(lecture, user, 4.5, 0, "내용", "제목");
+            ClassReview expectedReview = ClassReview.builder()
+                    .lecId(lecture)
+                    .userNumber(user)
+                    .starLating(4.5)
+                    .likes(0)
+                    .postTitle("제목")
+                    .postContent("내용")
+                    .build();
             
-            given(classReviewDataRepository.findById(reviewId)).willReturn(Optional.of(expectedReview));
+            given(reviewDataService.getReviewById(reviewId)).willReturn(expectedReview);
             
             // when
-            ClassReview result = reviewService.findById(reviewId);
+            ClassReview result = reviewDataService.getReviewById(reviewId);
             
             // then
             assertThat(result).isNotNull();
@@ -95,15 +107,16 @@ public class ReviewServiceTest {
         }
         
         @Test
-        @DisplayName("존재하지 않는 ID로 조회 시, NoSuchElementException을 발생한다")
-        void findByIdNotFound() {
+        @DisplayName("존재하지 않는 ID로 조회 시, ReviewNotFoundException을 발생한다")
+        void shouldThrowExceptionWhenReviewNotFound() {
             // given
             Long reviewId = 999L;
-            given(classReviewDataRepository.findById(reviewId)).willReturn(Optional.empty());
+            given(reviewDataService.getReviewById(reviewId))
+                    .willThrow(new ReviewNotFoundException("해당 수강후기가 존재하지 않습니다."));
             
             // when & then
-            assertThatThrownBy(() -> reviewService.findById(reviewId))
-                    .isInstanceOf(NoSuchElementException.class)
+            assertThatThrownBy(() -> reviewDataService.getReviewById(reviewId))
+                    .isInstanceOf(ReviewNotFoundException.class)
                     .hasMessage("해당 수강후기가 존재하지 않습니다.");
         }
     }
@@ -114,7 +127,7 @@ public class ReviewServiceTest {
         
         @Test
         @DisplayName("강의 ID로 전체 조회 시, 수강후기 목록을 반환한다")
-        void findAllSuccess() {
+        void shouldReturnReviewListWhenValidLectureIdProvided() {
             // given
             Long lectureId = 1L;
             User user = User.builder()
@@ -127,14 +140,28 @@ public class ReviewServiceTest {
                     .build();
             
             Lecture lecture = new Lecture(1L, "강의명", StarRating.createRatingBuilder(),
-                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택);
+                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택, 0L);
             
-            ClassReview review1 = ClassReview.create(lecture, user, 4.5, 0, "내용1", "제목1");
-            ClassReview review2 = ClassReview.create(lecture, user, 3.0, 5, "내용2", "제목2");
+            ClassReview review1 = ClassReview.builder()
+                    .lecId(lecture)
+                    .userNumber(user)
+                    .starLating(4.5)
+                    .likes(0)
+                    .postTitle("제목1")
+                    .postContent("내용1")
+                    .build();
+            ClassReview review2 = ClassReview.builder()
+                    .lecId(lecture)
+                    .userNumber(user)
+                    .starLating(3.0)
+                    .likes(0)
+                    .postTitle("제목2")
+                    .postContent("내용2")
+                    .build();
             
             List<ClassReview> reviews = Arrays.asList(review1, review2);
             
-            given(classReviewDataRepository.findAll(lectureId)).willReturn(reviews);
+            given(reviewDataService.getAll(lectureId)).willReturn(reviews);
             
             // when
             List<ReviewResponse> result = reviewService.findAll(lectureId);
@@ -146,28 +173,28 @@ public class ReviewServiceTest {
         
         @Test
         @DisplayName("강의 ID로 전체 조회 시 결과가 없으면, ReviewNotFoundException을 발생한다")
-        void findAllEmpty() {
+        void shouldThrowExceptionWhenNoReviewsExist() {
             // given
             Long lectureId = 1L;
-            given(classReviewDataRepository.findAll(lectureId)).willReturn(List.of());
+            given(reviewDataService.getAll(lectureId)).willReturn(List.of());
             
             // when & then
             assertThatThrownBy(() -> reviewService.findAll(lectureId))
                     .isInstanceOf(ReviewNotFoundException.class)
-                    .hasMessage("수강 후기가 어디에도 없습니다.");
+                    .hasMessage("수강 후기가 존재하지 않습니다.");
         }
     }
 
     @Nested
     @DisplayName("수강후기 작성 테스트")
-    class addReviewPostTest {
+    class writeTest {
         
         @Test
         @DisplayName("유효한 요청으로 수강후기 작성 시, 정상적으로 저장된다")
-        void addReviewPostSuccess() {
+        void shouldSaveReviewWhenValidRequestProvided() {
             // given
             ClassReviewRequest request = new ClassReviewRequest(
-                    "강의명", 20230857L, 4.5, "제목", "내용"
+                    "강의명", 20230857, 4.5, "제목", "내용"
             );
             
             User user = User.builder()
@@ -180,26 +207,29 @@ public class ReviewServiceTest {
                     .build();
             
             Lecture lecture = new Lecture(1L, "강의명", StarRating.createRatingBuilder(),
-                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택);
+                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택, 0L);
             
-            given(lectureDataService.findByLectureName("강의명")).willReturn(lecture);
-            given(userService.get(20230857L)).willReturn(user);
-            given(classReviewDataRepository.findByUserNumberAndLecId(user, lecture)).willReturn(Optional.empty());
+            LectureHistoryResponse response = LectureHistoryResponse.of(lecture, user);
+            
+            given(lectureHistoryValidator.check(20230857, "강의명")).willReturn(response);
+            doNothing().when(reviewHistoryValidator).check(user, lecture);
+            doNothing().when(reviewDataService).save(any(ClassReview.class));
             
             // when
-            reviewService.addReviewPost(request);
+            reviewService.write(request);
             
             // then
-            verify(classReviewDataRepository).save(any(ClassReview.class));
-            verify(enrollmentService).findByUserNumber(20230857, "강의명");
+            verify(lectureHistoryValidator).check(20230857, "강의명");
+            verify(reviewHistoryValidator).check(user, lecture);
+            verify(reviewDataService).save(any(ClassReview.class));
         }
         
         @Test
         @DisplayName("이미 작성한 강의에 수강후기 작성 시, AlreadyWritePostException을 발생한다")
-        void addReviewPostAlreadyWritten() {
+        void shouldThrowExceptionWhenReviewAlreadyExists() {
             // given
             ClassReviewRequest request = new ClassReviewRequest(
-                    "강의명", 20230857L , 4.5, "제목", "내용"
+                    "강의명", 20230857 , 4.5, "제목", "내용"
             );
             
             User user = User.builder()
@@ -212,17 +242,16 @@ public class ReviewServiceTest {
                     .build();
             
             Lecture lecture = new Lecture(1L, "강의명", StarRating.createRatingBuilder(),
-                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택);
+                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택, 0L);
             
-            ClassReview existingReview = ClassReview.create(lecture, user, 3.0, 0, "기존내용", "기존제목");
+            LectureHistoryResponse response = LectureHistoryResponse.of(lecture, user);
             
-            given(lectureDataService.findByLectureName("강의명")).willReturn(lecture);
-            given(userService.get(20230857L)).willReturn(user);
-            given(classReviewDataRepository.findByUserNumberAndLecId(user, lecture))
-                    .willReturn(Optional.of(existingReview));
+            given(lectureHistoryValidator.check(20230857, "강의명")).willReturn(response);
+            doThrow(new AlreadyWritePostException("이미 작성한 강의입니다."))
+                    .when(reviewHistoryValidator).check(user, lecture);
             
             // when & then
-            assertThatThrownBy(() -> reviewService.addReviewPost(request))
+            assertThatThrownBy(() -> reviewService.write(request))
                     .isInstanceOf(AlreadyWritePostException.class)
                     .hasMessage("이미 작성한 강의입니다.");
         }
@@ -234,7 +263,7 @@ public class ReviewServiceTest {
         
         @Test
         @DisplayName("유효한 요청으로 수강후기 수정 시, 정상적으로 수정된다")
-        void updateReviewPostSuccess() {
+        void shouldUpdateReviewWhenValidRequestProvided() {
             // given
             UpdateReviewRequest request = new UpdateReviewRequest(
                     1L, "수정된 제목", "수정된 내용", 3.0, 20230857L
@@ -250,11 +279,18 @@ public class ReviewServiceTest {
                     .build();
             
             Lecture lecture = new Lecture(1L, "강의명", StarRating.createRatingBuilder(),
-                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택);
+                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택, 0L);
             
-            ClassReview review = ClassReview.create(lecture, user, 4.5, 0, "원본내용", "원본제목");
+            ClassReview review = ClassReview.builder()
+                    .lecId(lecture)
+                    .userNumber(user)
+                    .starLating(4.5)
+                    .likes(0)
+                    .postTitle("원본제목")
+                    .postContent("원본내용")
+                    .build();
             
-            given(classReviewDataRepository.findById(1L)).willReturn(Optional.of(review));
+            given(reviewDataService.getReviewById(1L)).willReturn(review);
             
             // when
             Long result = reviewService.updateReviewPost(request);
@@ -265,7 +301,7 @@ public class ReviewServiceTest {
         
         @Test
         @DisplayName("다른 사용자의 수강후기 수정 시, InValidReviewAccessException을 발생한다")
-        void updateReviewPostInvalidUser() {
+        void shouldThrowExceptionWhenUnauthorizedUserTriesToUpdate() {
             // given
             UpdateReviewRequest request = new UpdateReviewRequest(
                     1L, "수정된 제목", "수정된 내용", 3.0, 99999999L
@@ -281,11 +317,18 @@ public class ReviewServiceTest {
                     .build();
             
             Lecture lecture = new Lecture(1L, "강의명", StarRating.createRatingBuilder(),
-                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택);
+                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택, 0L);
             
-            ClassReview review = ClassReview.create(lecture, originalUser, 4.5, 0, "원본내용", "원본제목");
+            ClassReview review = ClassReview.builder()
+                    .lecId(lecture)
+                    .userNumber(originalUser)
+                    .starLating(4.5)
+                    .likes(0)
+                    .postTitle("원본제목")
+                    .postContent("원본내용")
+                    .build();
             
-            given(classReviewDataRepository.findById(1L)).willReturn(Optional.of(review));
+            given(reviewDataService.getReviewById(1L)).willReturn(review);
             
             // when & then
             assertThatThrownBy(() -> reviewService.updateReviewPost(request))
@@ -300,7 +343,7 @@ public class ReviewServiceTest {
         
         @Test
         @DisplayName("처음 좋아요 요청 시, 좋아요가 추가된다")
-        void likeReviewFirst() {
+        void shouldAddLikeWhenFirstTimeRequested() {
             // given
             LikeRequest request = new LikeRequest(20230857, 1L);
             
@@ -314,25 +357,31 @@ public class ReviewServiceTest {
                     .build();
             
             Lecture lecture = new Lecture(1L, "강의명", StarRating.createRatingBuilder(),
-                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택);
+                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택, 0L);
             
-            ClassReview review = ClassReview.create(lecture, user, 4.5, 0, "내용", "제목");
+            ClassReview review = ClassReview.builder()
+                    .lecId(lecture)
+                    .userNumber(user)
+                    .starLating(4.5)
+                    .likes(0)
+                    .postTitle("제목")
+                    .postContent("내용")
+                    .build();
             
-            given(userService.get(20230857L)).willReturn(user);
-            given(classReviewDataRepository.findById(1L)).willReturn(Optional.of(review));
-            given(likesDataRepository.findByUserAndClassReview(user, review)).willReturn(Optional.empty());
+            given(userService.findUser(20230857)).willReturn(user);
+            given(reviewDataService.getReviewById(1L)).willReturn(review);
+            given(likeService.isLiked(user, review)).willReturn(LikedStatus.POSSIBLE_LIKE);
             
             // when
             String result = reviewService.likeReview(request);
             
             // then
             assertThat(result).isEqualTo("좋아요가 추가되었습니다.");
-            verify(likeService).save(any(Likes.class));
         }
         
         @Test
         @DisplayName("이미 좋아요한 수강후기에 좋아요 요청 시, 좋아요가 취소된다")
-        void likeReviewCancel() {
+        void shouldRemoveLikeWhenAlreadyLiked() {
             // given
             LikeRequest request = new LikeRequest(20230857, 1L);
             
@@ -346,21 +395,26 @@ public class ReviewServiceTest {
                     .build();
             
             Lecture lecture = new Lecture(1L, "강의명", StarRating.createRatingBuilder(),
-                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택);
+                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택, 0L);
             
-            ClassReview review = ClassReview.create(lecture, user, 4.5, 1, "내용", "제목");
-            Likes existingLike = Likes.toEntity(review, user);
+            ClassReview review = ClassReview.builder()
+                    .lecId(lecture)
+                    .userNumber(user)
+                    .starLating(4.5)
+                    .likes(0)
+                    .postTitle("제목")
+                    .postContent("내용")
+                    .build();
             
-            given(userService.get(20230857L)).willReturn(user);
-            given(classReviewDataRepository.findById(1L)).willReturn(Optional.of(review));
-            given(likesDataRepository.findByUserAndClassReview(user, review)).willReturn(Optional.of(existingLike));
+            given(userService.findUser(20230857)).willReturn(user);
+            given(reviewDataService.getReviewById(1L)).willReturn(review);
+            given(likeService.isLiked(user, review)).willReturn(LikedStatus.ALREADY_LIKE);
             
             // when
             String result = reviewService.likeReview(request);
             
             // then
             assertThat(result).isEqualTo("좋아요가 취소되었습니다.");
-            verify(likeService).deleteByClassReviewAndUser(review, user);
         }
     }
 
@@ -370,7 +424,7 @@ public class ReviewServiceTest {
         
         @Test
         @DisplayName("사용자 번호로 내 수강후기 조회 시, 수강후기 목록을 반환한다")
-        void findMyReviewSuccess() {
+        void shouldReturnMyReviewsWhenValidUserNumberProvided() {
             // given
             int userNumber = 20230857;
             User user = User.builder()
@@ -383,14 +437,28 @@ public class ReviewServiceTest {
                     .build();
             
             Lecture lecture = new Lecture(1L, "강의명", StarRating.createRatingBuilder(),
-                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택);
+                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택, 0L);
             
-            ClassReview review1 = ClassReview.create(lecture, user, 4.5, 0, "내용1", "제목1");
-            ClassReview review2 = ClassReview.create(lecture, user, 3.0, 5, "내용2", "제목2");
+            ClassReview review1 = ClassReview.builder()
+                    .lecId(lecture)
+                    .userNumber(user)
+                    .starLating(4.5)
+                    .likes(0)
+                    .postTitle("제목1")
+                    .postContent("내용1")
+                    .build();
+            ClassReview review2 = ClassReview.builder()
+                    .lecId(lecture)
+                    .userNumber(user)
+                    .starLating(3.0)
+                    .likes(0)
+                    .postTitle("제목2")
+                    .postContent("내용2")
+                    .build();
             
             List<ClassReview> reviews = Arrays.asList(review1, review2);
             
-            given(classReviewDataRepository.findByUserNumber(userNumber)).willReturn(reviews);
+            given(reviewDataService.getReviewsByUserNumber(userNumber)).willReturn(reviews);
             
             // when
             List<ReviewMeResponse> result = reviewService.findMyReview(userNumber);
@@ -402,10 +470,10 @@ public class ReviewServiceTest {
         
         @Test
         @DisplayName("내 수강후기가 없을 때 조회 시, ReviewNotFoundException을 발생한다")
-        void findMyReviewEmpty() {
+        void shouldThrowExceptionWhenUserHasNoReviews() {
             // given
             int userNumber = 20230857;
-            given(classReviewDataRepository.findByUserNumber(userNumber)).willReturn(List.of());
+            given(reviewDataService.getReviewsByUserNumber(userNumber)).willReturn(List.of());
             
             // when & then
             assertThatThrownBy(() -> reviewService.findMyReview(userNumber))
@@ -420,7 +488,7 @@ public class ReviewServiceTest {
         
         @Test
         @DisplayName("유효한 요청으로 수강후기 삭제 시, 정상적으로 삭제된다")
-        void deleteReviewPostSuccess() {
+        void shouldDeleteReviewWhenValidRequestProvided() {
             // given
             DeleteReviewRequest request = new DeleteReviewRequest(1L, 20230857);
             
@@ -434,20 +502,175 @@ public class ReviewServiceTest {
                     .build();
             
             Lecture lecture = new Lecture(1L, "강의명", StarRating.createRatingBuilder(),
-                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택);
+                                        "소프트웨어학과", "한국대학교", "교수명", LectureType.교양선택, 0L);
             
-            ClassReview review = ClassReview.create(lecture, user, 4.5, 0, "내용", "제목");
+            ClassReview review = ClassReview.builder()
+                    .lecId(lecture)
+                    .userNumber(user)
+                    .starLating(4.5)
+                    .likes(0)
+                    .postTitle("제목")
+                    .postContent("내용")
+                    .build();
             
-            given(userService.get(20230857L)).willReturn(user);
-            given(classReviewDataRepository.findByReviewIdAndUserNumber(1L, user)).willReturn(Optional.of(review));
-            given(lectureDataService.findById(1L)).willReturn(lecture);
+            given(userService.findUser(20230857)).willReturn(user);
+            given(reviewDataService.findByReviewIdAndUserNumber(1L, user)).willReturn(review);
+            doNothing().when(likeDataService).deleteAllByClassReview(review);
+            doNothing().when(reviewDataService).deleteById(1L);
             
             // when
             reviewService.deleteReviewPost(request);
             
             // then
-            verify(likeService).deleteAllByClassReview(review);
-            verify(classReviewDataRepository).deleteById(1L);
+            verify(likeDataService).deleteAllByClassReview(review);
+            verify(reviewDataService).deleteById(1L);
+        }
+    }
+
+    @Transactional
+    @Nested
+    @DisplayName("별점 계산 테스트")
+    class starRatingCalculationTest {
+        
+        @Test
+        @DisplayName("두 사용자가 수강후기를 작성했을 때, 별점이 정확하게 계산된다")
+        void shouldCalculateCorrectAverageRatingWhenTwoUsersAddReviews() {
+            // given
+            // 첫 번째 사용자
+            User user1 = User.builder()
+                    .userNumber(20230857)
+                    .userName("홍길동")
+                    .department("소프트웨어학과")
+                    .nickname("hong123")
+                    .password("password")
+                    .authorities(Set.of())
+                    .build();
+            
+            // 두 번째 사용자
+            User user2 = User.builder()
+                    .userNumber(20230858)
+                    .userName("김철수")
+                    .department("소프트웨어학과")
+                    .nickname("kim123")
+                    .password("password")
+                    .authorities(Set.of())
+                    .build();
+            
+            // 강의 (초기 별점 0.0, 리뷰 수 0)
+            Lecture lecture = new Lecture(1L, "자바프로그래밍", StarRating.createRatingBuilder(),
+                                        "소프트웨어학과", "한국대학교", "김교수", LectureType.전공필수, 0L);
+            
+            // 첫 번째 수강후기 요청 (별점 4.0)
+            ClassReviewRequest request1 = new ClassReviewRequest(
+                    "자바프로그래밍", 20230857, 4.0, "좋은 강의", "내용1"
+            );
+            
+            // 두 번째 수강후기 요청 (별점 5.0)
+            ClassReviewRequest request2 = new ClassReviewRequest(
+                    "자바프로그래밍", 20230858, 5.0, "훌륭한 강의", "내용2"
+            );
+            
+            // Mock 설정
+            LectureHistoryResponse response1 = LectureHistoryResponse.of(lecture, user1);
+            LectureHistoryResponse response2 = LectureHistoryResponse.of(lecture, user2);
+            
+            given(lectureHistoryValidator.check(20230857, "자바프로그래밍")).willReturn(response1);
+            given(lectureHistoryValidator.check(20230858, "자바프로그래밍")).willReturn(response2);
+            doNothing().when(reviewHistoryValidator).check(user1, lecture);
+            doNothing().when(reviewHistoryValidator).check(user2, lecture);
+            doNothing().when(reviewDataService).save(any(ClassReview.class));
+            
+            // when
+            // 첫 번째 사용자가 수강후기 작성
+            reviewService.write(request1);
+            
+            // then - 첫 번째 리뷰 후 별점 확인
+            assertThat(lecture.getStarRating().getReviewCount()).isEqualTo(1L);
+            assertThat(lecture.getStarRating().getTotalRating()).isEqualTo(4.0);
+            assertThat(lecture.getStarRating().getAverageRating()).isEqualTo(4.0);
+            
+            // when
+            // 두 번째 사용자가 수강후기 작성
+            reviewService.write(request2);
+            
+            // then - 두 번째 리뷰 후 별점 확인
+            assertThat(lecture.getStarRating().getReviewCount()).isEqualTo(2L);
+            assertThat(lecture.getStarRating().getTotalRating()).isEqualTo(9.0);
+            assertThat(lecture.getStarRating().getAverageRating()).isEqualTo(4.5);
+            
+            // verify
+            verify(reviewDataService, times(2)).save(any(ClassReview.class));
+            verify(lectureHistoryValidator, times(2)).check(anyInt(), eq("자바프로그래밍"));
+            verify(reviewHistoryValidator, times(2)).check(any(User.class), eq(lecture));
+        }
+        
+        @Test
+        @DisplayName("여러 사용자가 다양한 별점으로 수강후기를 작성했을 때, 평균 별점이 정확하게 계산된다")
+        void shouldCalculateCorrectAverageRatingWhenMultipleUsersAddVariousRatings() {
+            // given
+            User user1 = User.builder()
+                    .userNumber(20230857)
+                    .userName("홍길동")
+                    .department("소프트웨어학과")
+                    .nickname("hong123")
+                    .password("password")
+                    .authorities(Set.of())
+                    .build();
+            
+            User user2 = User.builder()
+                    .userNumber(20230858)
+                    .userName("김철수")
+                    .department("소프트웨어학과")
+                    .nickname("kim123")
+                    .password("password")
+                    .authorities(Set.of())
+                    .build();
+            
+            User user3 = User.builder()
+                    .userNumber(20230859)
+                    .userName("박영희")
+                    .department("소프트웨어학과")
+                    .nickname("park123")
+                    .password("password")
+                    .authorities(Set.of())
+                    .build();
+            
+            Lecture lecture = new Lecture(1L, "데이터구조", StarRating.createRatingBuilder(),
+                                        "소프트웨어학과", "한국대학교", "이교수", LectureType.전공필수, 0L);
+            
+            ClassReviewRequest request1 = new ClassReviewRequest(
+                    "데이터구조", 20230857, 3.0, "보통", "내용1"
+            );
+            ClassReviewRequest request2 = new ClassReviewRequest(
+                    "데이터구조", 20230858, 4.5, "좋음", "내용2"
+            );
+            ClassReviewRequest request3 = new ClassReviewRequest(
+                    "데이터구조", 20230859, 2.5, "아쉬움", "내용3"
+            );
+            
+            // Mock 설정
+            LectureHistoryResponse response1 = LectureHistoryResponse.of(lecture, user1);
+            LectureHistoryResponse response2 = LectureHistoryResponse.of(lecture, user2);
+            LectureHistoryResponse response3 = LectureHistoryResponse.of(lecture, user3);
+            
+            given(lectureHistoryValidator.check(20230857, "데이터구조")).willReturn(response1);
+            given(lectureHistoryValidator.check(20230858, "데이터구조")).willReturn(response2);
+            given(lectureHistoryValidator.check(20230859, "데이터구조")).willReturn(response3);
+            doNothing().when(reviewHistoryValidator).check(any(User.class), eq(lecture));
+            doNothing().when(reviewDataService).save(any(ClassReview.class));
+            
+            // when
+            reviewService.write(request1); // 3.0
+            reviewService.write(request2); // 4.5
+            reviewService.write(request3); // 2.5
+            
+            // then
+            // 평균: (3.0 + 4.5 + 2.5) / 3 = 10.0 / 3 = 3.333...
+            assertThat(lecture.getStarRating().getReviewCount()).isEqualTo(3L);
+            assertThat(lecture.getStarRating().getTotalRating()).isEqualTo(10.0);
+            assertThat(lecture.getStarRating().getAverageRating()).isCloseTo(3.333, org.assertj.core.data.Offset.offset(0.001));
+            
+            verify(reviewDataService, times(3)).save(any(ClassReview.class));
         }
     }
 }

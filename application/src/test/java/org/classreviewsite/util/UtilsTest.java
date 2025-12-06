@@ -19,6 +19,7 @@ public class UtilsTest {
 
         // then
         Assertions.assertThat(strValue.length()).isEqualTo(3);
+        Assertions.assertThat(translatedNumber).isEqualTo(1.5);
     }
 
 }

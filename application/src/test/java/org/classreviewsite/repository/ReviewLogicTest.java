@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+
 public class ReviewLogicTest {
     @Autowired EntityManager em;
     @Autowired LectureDataRepository lectureDataRepository;
@@ -31,18 +31,25 @@ public class ReviewLogicTest {
         ClassReviewRequest request = ClassReviewRequest.of(
                 "작성글제목",
                 "작성글내용",
-                20191434L,
+                20191434,
                 4.5,
                 "아이데이션융합실습4-SW(캡스톤디자인)"
         );
         Lecture lecture = lectureDataRepository.findByLectureName(request.getLectureName()).get();
         User user = userDataRepository.findById(request.getUserNumber()).get();
 
-        ClassReview review = ClassReview.create(lecture, user, request.getStarLating(), 0, request.getPostContent(), request.getPostTitle());
+        ClassReview review = ClassReview.builder()
+                .lecId(lecture)
+                .userNumber(user)
+                .starLating(request.getStarLating())
+                .likes(0)
+                .postTitle(request.getPostTitle())
+                .postContent(request.getPostContent())
+                .build();
 
         assertThat(classReviewDataRepository.findByUserNumberAndLecId(user, lecture)).isNotNull();
 
-        lecture.addReview(request.getStarLating());
+        lecture.addStarRating(request.getStarLating());
         em.persist(review);
         em.flush();
         em.clear();

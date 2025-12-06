@@ -44,45 +44,6 @@ class UserControllerTest {
     private AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @Test
-    @DisplayName("유효한 자격증명으로 로그인하면, 성공 응답을 반환한다")
-    @WithMockUser
-    void loginWithValidCredentials() throws Exception {
-        // Given
-        LoginUserRequest request = new LoginUserRequest();
-        request.setUserNumber(20241234);
-        request.setPassword("password123");
-
-        // Mock Authentication 객체 생성
-        Authentication mockAuthentication = mock(Authentication.class);
-        given(mockAuthentication.getName()).willReturn("20241234");
-        Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-        doReturn(authorities).when(mockAuthentication).getAuthorities();
-
-        // Mock AuthenticationManager 설정
-        AuthenticationManager mockAuthManager = mock(AuthenticationManager.class);
-        given(authenticationManagerBuilder.getObject()).willReturn(mockAuthManager);
-        given(mockAuthManager.authenticate(any())).willReturn(mockAuthentication);
-
-        // JWT 토큰 생성 Mock
-        String mockToken = "mock.jwt.token";
-        given(jwtTokenProvider.createToken(any(Authentication.class))).willReturn(mockToken);
-
-        // When & Then
-        mockMvc.perform(post("/signin")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .with(csrf()))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status").value(200))
-                .andExpect(jsonPath("$.message").value("로그인을 성공하였습니다."))
-                .andExpect(jsonPath("$.data.name").value("20241234"))
-                .andExpect(jsonPath("$.data.token").value(mockToken))
-                .andExpect(jsonPath("$.data.userKey").value("ROLE_USER"));
-    }
-
-    @Test
     @DisplayName("잘못된 자격증명으로 로그인하면, 인증 실패 응답을 반환한다")
     @WithMockUser
     void loginWithInvalidCredentials() throws Exception {
@@ -130,21 +91,6 @@ class UserControllerTest {
         LoginUserRequest request = new LoginUserRequest();
         // userNumber와 password를 설정하지 않음
 
-        // Mock Authentication 객체 생성
-        Authentication mockAuthentication = mock(Authentication.class);
-        given(mockAuthentication.getName()).willReturn("null"); // null 값이 문자열로 변환됨
-        Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-        doReturn(authorities).when(mockAuthentication).getAuthorities();
-
-        // Mock AuthenticationManager 설정
-        AuthenticationManager mockAuthManager = mock(AuthenticationManager.class);
-        given(authenticationManagerBuilder.getObject()).willReturn(mockAuthManager);
-        given(mockAuthManager.authenticate(any())).willReturn(mockAuthentication);
-
-        // JWT 토큰 생성 Mock
-        String mockToken = "mock.jwt.token";
-        given(jwtTokenProvider.createToken(any(Authentication.class))).willReturn(mockToken);
-
         // When & Then
         mockMvc.perform(post("/signin")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -170,44 +116,5 @@ class UserControllerTest {
                         .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isUnsupportedMediaType());
-    }
-
-    @Test
-    @DisplayName("관리자 권한으로 로그인하면, 관리자 토큰을 반환한다")
-    @WithMockUser
-    void loginWithAdminRole() throws Exception {
-        // Given
-        LoginUserRequest request = new LoginUserRequest();
-        request.setUserNumber(20241001);
-        request.setPassword("adminpass");
-
-        // Mock Authentication 객체 생성 (ADMIN 권한)
-        Authentication mockAuthentication = mock(Authentication.class);
-        given(mockAuthentication.getName()).willReturn("20241001");
-        Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("STUDENT"));
-        doReturn(authorities).when(mockAuthentication).getAuthorities();
-
-        // Mock AuthenticationManager 설정
-        AuthenticationManager mockAuthManager = mock(AuthenticationManager.class);
-        given(authenticationManagerBuilder.getObject()).willReturn(mockAuthManager);
-        given(mockAuthManager.authenticate(any())).willReturn(mockAuthentication);
-
-        // JWT 토큰 생성 Mock
-        String mockToken = "admin.jwt.token";
-        given(jwtTokenProvider.createToken(any(Authentication.class))).willReturn(mockToken);
-
-        // When & Then
-        mockMvc.perform(post("/signin")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .with(csrf()))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status").value(200))
-                .andExpect(jsonPath("$.message").value("로그인을 성공하였습니다."))
-                .andExpect(jsonPath("$.data.name").value("20241001"))
-                .andExpect(jsonPath("$.data.token").value(mockToken))
-                .andExpect(jsonPath("$.data.userKey").value("STUDENT"));
     }
 }

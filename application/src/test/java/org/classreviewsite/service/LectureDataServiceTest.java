@@ -25,7 +25,8 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 public class LectureDataServiceTest {
 
-    @InjectMocks LectureDataService lectureDataService;
+    @InjectMocks
+    LectureDataService lectureDataService;
     @Mock LectureDataRepository lectureDataRepository;
 
     @Nested
@@ -38,7 +39,7 @@ public class LectureDataServiceTest {
             // given
             String lectureName = "자바프로그래밍";
             Lecture expectedLecture = new Lecture(1L, lectureName, StarRating.createRatingBuilder(),
-                                                "소프트웨어학과", "한국대학교", "김교수", LectureType.전공필수);
+                                                "소프트웨어학과", "한국대학교", "김교수", LectureType.전공필수, 0L);
             
             given(lectureDataRepository.findByLectureName(lectureName)).willReturn(Optional.of(expectedLecture));
             
@@ -91,7 +92,7 @@ public class LectureDataServiceTest {
             // given
             Long lectureId = 1L;
             Lecture expectedLecture = new Lecture(lectureId, "자바프로그래밍", StarRating.createRatingBuilder(),
-                                                "소프트웨어학과", "한국대학교", "김교수", LectureType.전공필수);
+                                                "소프트웨어학과", "한국대학교", "김교수", LectureType.전공필수, 0L);
             
             given(lectureDataRepository.findById(lectureId)).willReturn(Optional.of(expectedLecture));
             
@@ -141,9 +142,9 @@ public class LectureDataServiceTest {
             // given
             String university = "한국대학교";
             Lecture lecture1 = new Lecture(1L, "자바프로그래밍", StarRating.createRatingBuilder(),
-                                         "소프트웨어학과", university, "김교수", LectureType.전공필수);
+                                         "소프트웨어학과", university, "김교수", LectureType.전공필수, 0L);
             Lecture lecture2 = new Lecture(2L, "데이터베이스", StarRating.createRatingBuilder(),
-                                         "소프트웨어학과", university, "이교수", LectureType.전공선택);
+                                         "소프트웨어학과", university, "이교수", LectureType.전공선택, 0L);
             
             List<Lecture> expectedLectures = Arrays.asList(lecture1, lecture2);
             
@@ -191,9 +192,9 @@ public class LectureDataServiceTest {
             // given
             String university = "한국대학교";
             Lecture lecture1 = new Lecture(1L, "자바프로그래밍", StarRating.createRatingBuilder(),
-                                         "소프트웨어학과", university, "김교수", LectureType.전공필수);
+                                         "소프트웨어학과", university, "김교수", LectureType.전공필수, 0L);
             Lecture lecture2 = new Lecture(2L, "수학", StarRating.createRatingBuilder(),
-                                         "수학과", university, "박교수", LectureType.교양필수);
+                                         "수학과", university, "박교수", LectureType.교양필수, 0L);
             
             List<Lecture> expectedLectures = Arrays.asList(lecture1, lecture2);
             
@@ -220,7 +221,7 @@ public class LectureDataServiceTest {
             // given
             Long lectureId = 12345L;
             Lecture expectedLecture = new Lecture(lectureId, "알고리즘", StarRating.createRatingBuilder(),
-                                                "소프트웨어학과", "한국대학교", "최교수", LectureType.전공선택);
+                                                "소프트웨어학과", "한국대학교", "최교수", LectureType.전공선택, 0L);
             
             given(lectureDataRepository.findByLectureId(lectureId)).willReturn(Optional.of(expectedLecture));
             

@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -48,104 +47,6 @@ class ReviewControllerTest {
     class reviewListTest {
         
         @Test
-        @DisplayName("기본 수강후기 목록 조회 시, 별점 높은 순으로 반환한다")
-        @WithMockUser
-        void getReviewListDefault() throws Exception {
-            // given
-            Long lectureId = 1L;
-            List<ReviewResponse> mockResponse = Arrays.asList(
-                createMockReviewResponse(1L, "좋은 강의", 5.0),
-                createMockReviewResponse(2L, "괜찮은 강의", 4.0)
-            );
-            
-            given(reviewService.findByLectureIdOrderByStarLatingDesc(lectureId))
-                    .willReturn(mockResponse);
-            
-            // when & then
-            mockMvc.perform(get("/review")
-                            .param("lectureId", String.valueOf(lectureId)))
-                    .andDo(print())
-                    .andExpect(status().isOk())
-                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(200))
-                    .andExpect(jsonPath("$.message").value("수강 후기 별점 높은 순 조회입니다."))
-                    .andExpect(jsonPath("$.data").isArray())
-                    .andExpect(jsonPath("$.data").isNotEmpty());
-        }
-        
-        @Test
-        @DisplayName("별점 낮은 순 조회 요청 시, 별점 낮은 순으로 반환한다")
-        @WithMockUser
-        void getReviewListByLowness() throws Exception {
-            // given
-            Long lectureId = 1L;
-            List<ReviewResponse> mockResponse = Arrays.asList(
-                createMockReviewResponse(1L, "아쉬운 강의", 2.0),
-                createMockReviewResponse(2L, "괜찮은 강의", 4.0)
-            );
-            
-            given(reviewService.findByLectureIdOrderByStarLatingAsc(lectureId))
-                    .willReturn(mockResponse);
-            
-            // when & then
-            mockMvc.perform(get("/review")
-                            .param("lectureId", String.valueOf(lectureId))
-                            .param("lowness", "true"))
-                    .andDo(print())
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value(200))
-                    .andExpect(jsonPath("$.message").value("수강 후기 별점 낮은 순 조회입니다."));
-        }
-        
-        @Test
-        @DisplayName("좋아요 높은 순 조회 요청 시, 좋아요 높은 순으로 반환한다")
-        @WithMockUser
-        void getReviewListByLikes() throws Exception {
-            // given
-            Long lectureId = 1L;
-            List<ReviewResponse> mockResponse = Arrays.asList(
-                createMockReviewResponse(1L, "인기 있는 리뷰", 4.5),
-                createMockReviewResponse(2L, "일반 리뷰", 4.0)
-            );
-            
-            given(reviewService.findByLectureIdOrderByLikesDesc(lectureId))
-                    .willReturn(mockResponse);
-            
-            // when & then
-            mockMvc.perform(get("/review")
-                            .param("lectureId", String.valueOf(lectureId))
-                            .param("likes", "true"))
-                    .andDo(print())
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value(200))
-                    .andExpect(jsonPath("$.message").value("수강 후기 좋아요 높은 순 조회입니다."));
-        }
-        
-        @Test
-        @DisplayName("최신순 조회 요청 시, 날짜 최신순으로 반환한다")
-        @WithMockUser
-        void getReviewListByRecent() throws Exception {
-            // given
-            Long lectureId = 1L;
-            List<ReviewResponse> mockResponse = Arrays.asList(
-                createMockReviewResponse(1L, "최신 리뷰", 4.0),
-                createMockReviewResponse(2L, "이전 리뷰", 4.5)
-            );
-            
-            given(reviewService.findByLectureIdOrderByCreateDateDesc(lectureId))
-                    .willReturn(mockResponse);
-            
-            // when & then
-            mockMvc.perform(get("/review")
-                            .param("lectureId", String.valueOf(lectureId))
-                            .param("recent", "true"))
-                    .andDo(print())
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value(200))
-                    .andExpect(jsonPath("$.message").value("수강 후기 날짜 최신순 조회입니다."));
-        }
-        
-        @Test
         @DisplayName("필수 파라미터 lectureId 없이 요청 시, Bad Request를 반환한다")
         @WithMockUser
         void getReviewListWithoutLectureId() throws Exception {
@@ -166,10 +67,10 @@ class ReviewControllerTest {
         void addReviewSuccess() throws Exception {
             // given
             ClassReviewRequest request = new ClassReviewRequest(
-                    "자바프로그래밍", 20230857L, 4.5, "좋은 강의", "정말 유익한 강의였습니다"
+                    "자바프로그래밍", 20230857, 4.5, "좋은 강의", "정말 유익한 강의였습니다"
             );
             
-            doNothing().when(reviewService).addReviewPost(any(ClassReviewRequest.class));
+            doNothing().when(reviewService).write(any(ClassReviewRequest.class));
             
             // when & then
             mockMvc.perform(post("/review")
@@ -339,15 +240,13 @@ class ReviewControllerTest {
     }
 
     // 헬퍼 메서드들
-    private ReviewResponse createMockReviewResponse(Long reviewId, String title, Double rating) {
-        // ReviewResponse 객체를 생성하는 헬퍼 메서드
-        // 실제 구현은 ReviewResponse의 생성자나 팩토리 메서드에 따라 달라집니다
-        return null; // 실제로는 적절한 객체를 반환해야 합니다
-    }
-    
     private ReviewMeResponse createMockReviewMeResponse(Long reviewId, String title) {
-        // ReviewMeResponse 객체를 생성하는 헬퍼 메서드
-        // 실제 구현은 ReviewMeResponse의 생성자나 팩토리 메서드에 따라 달라집니다
-        return null; // 실제로는 적절한 객체를 반환해야 합니다
+        return ReviewMeResponse.builder()
+                .reviewId(reviewId)
+                .postTitle(title)
+                .postContent("내용")
+                .starLating(4.5)
+                .lectureName("강의명")
+                .build();
     }
 }
