@@ -27,10 +27,7 @@ public class ReviewMeResponse {
                 NumberFormat.format(classReview.getStarLating()),
                 classReview.getLikes(),
                 classReview.getCreatedDate().getYear()+"-"+classReview.getCreatedDate().getMonth().getValue()+"-"+classReview.getCreatedDate().getDayOfMonth(),
-                classReview.getLecId()
-
+                classReview.getLecId().getLectureName()
         );
     }
-
-
 }
