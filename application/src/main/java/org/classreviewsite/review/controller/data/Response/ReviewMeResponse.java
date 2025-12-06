@@ -10,6 +10,7 @@ import org.classreviewsite.domain.review.ClassReview;
 @Data
 @AllArgsConstructor
 @Slf4j
+@Builder
 public class ReviewMeResponse {
     private Long reviewId;
     private String postTitle;
