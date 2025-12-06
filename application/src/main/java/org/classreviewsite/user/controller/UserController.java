@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
    private final UserService userService;
+   private final UserSignInService userSignInService;
 
     @PostMapping(value = "/signin", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "로그인 요청", description = "로그인을 요청합니다.")
