@@ -2,13 +2,15 @@ package org.classreviewsite.lecture.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.classreviewsite.domain.lecture.Enrollment;
+import org.classreviewsite.domain.lecture.EnrollmentDataRepository;
 import org.classreviewsite.handler.exception.*;
 import org.classreviewsite.lecture.controller.data.response.EnrollmentResponse;
-import org.classreviewsite.lecture.infrastructure.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,10 +31,8 @@ public class EnrollmentDataService {
         }
 
         @Transactional(readOnly = true)
-        public Enrollment findByUserNumber(int userNumber, String lectureName){
-            Enrollment list = enrollmentDataRepository.findByUserNumber_UserNumberAndLecture_LectureName(userNumber, lectureName).orElseThrow(() -> new NoPermissionReviewException(""));
-            log.info("{}", list.getUserNumber());
-            return list;
+        public Optional<Enrollment> findByUserNumber(int userNumber, String lectureName){
+            return enrollmentDataRepository.findByUserNumber_UserNumberAndLecture_LectureName(userNumber, lectureName);
         }
 
 }
