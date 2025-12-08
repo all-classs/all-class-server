@@ -1,7 +1,7 @@
 package org.classreviewsite.util;
 
 import org.assertj.core.api.Assertions;
-import org.classreviewsite.common.util.NumberFormat;
+import org.classreviewsite.domain.util.NumberFormat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +19,7 @@ public class UtilsTest {
 
         // then
         Assertions.assertThat(strValue.length()).isEqualTo(3);
+        Assertions.assertThat(translatedNumber).isEqualTo(1.5);
     }
 
 }

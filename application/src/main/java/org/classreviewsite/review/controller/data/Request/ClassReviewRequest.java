@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.classreviewsite.review.infrastructure.ClassReview;
+import org.classreviewsite.domain.review.ClassReview;
 
 @Builder
 @Getter
@@ -12,7 +12,7 @@ import org.classreviewsite.review.infrastructure.ClassReview;
 @AllArgsConstructor
 public class ClassReviewRequest {
     private String lectureName;
-    private Long userNumber;
+    private Integer userNumber;
     private Double starLating;
     private String postTitle;
     private String postContent;
@@ -20,14 +20,14 @@ public class ClassReviewRequest {
     public static ClassReviewRequest from(ClassReview review){
         return new ClassReviewRequest(
                 review.getLecId().getLectureName(),
-                Long.valueOf(review.getUserNumber().getUserNumber()),
+                review.getUserNumber().getUserNumber(),
                 review.getStarLating(),
                 review.getPostTitle(),
                 review.getPostContent()
         );
     }
 
-    public static ClassReviewRequest of(String postTitle, String postContent, Long userNumber, Double starLating, String lectureName){
+    public static ClassReviewRequest of(String postTitle, String postContent, Integer userNumber, Double starLating, String lectureName){
         return new ClassReviewRequest(
                 lectureName,
                 userNumber,

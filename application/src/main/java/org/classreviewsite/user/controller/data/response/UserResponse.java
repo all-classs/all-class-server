@@ -2,7 +2,7 @@ package org.classreviewsite.user.controller.data.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.classreviewsite.user.infrastructure.User;
+import org.classreviewsite.domain.user.User;
 
 @Data
 @AllArgsConstructor

@@ -2,15 +2,9 @@ package org.classreviewsite.lecture.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.classreviewsite.handler.exception.ClassNotFoundException;
-import org.classreviewsite.handler.exception.NoPermissionReviewException;
-import org.classreviewsite.handler.exception.UserNotFoundException;
-import org.classreviewsite.lecture.infrastructure.Enrollment;
-import org.classreviewsite.lecture.infrastructure.Lecture;
+import org.classreviewsite.domain.lecture.Lecture;
+import org.classreviewsite.domain.lecture.LectureDataRepository;
 import org.classreviewsite.handler.exception.LectureNotFoundException;
-import org.classreviewsite.lecture.infrastructure.LectureDataRepository;
-import org.classreviewsite.user.infrastructure.User;
-import org.classreviewsite.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

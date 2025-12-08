@@ -1,7 +1,7 @@
 package org.classreviewsite.service;
 
-import org.classreviewsite.lecture.infrastructure.ImageUrl;
-import org.classreviewsite.review.infrastructure.ImageUrlDataRepository;
+import org.classreviewsite.domain.lecture.ImageUrl;
+import org.classreviewsite.domain.lecture.ImageUrlDataRepository;
 import org.classreviewsite.review.service.ImageUrlService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

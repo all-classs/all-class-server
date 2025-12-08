@@ -1,6 +1,6 @@
 package org.classreviewsite.domain;
 
-import org.classreviewsite.lecture.infrastructure.StarRating;
+import org.classreviewsite.domain.lecture.StarRating;
 import org.classreviewsite.review.controller.data.Request.ClassReviewRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,15 +17,13 @@ public class StarRatingTest {
 
     @BeforeEach
     void setUp() {
-        classReviewRequest = ClassReviewRequest.of("", "", 20201234L, 4.0, "");
+        classReviewRequest = ClassReviewRequest.of("", "", 20201234, 4.0, "");
     }
 
     @Test
     @DisplayName("별점이 추가될때, 평균 별점과 총합 별점을 변경한다.")
-    void addRating() {
+    void shouldUpdateAverageAndTotalRatingWhenAddingRating() {
         Double rating = classReviewRequest.getStarLating();
-
-        System.out.println(classReviewRequest.getStarLating());
 
         StarRating starRating = StarRating.createRatingBuilder();
         starRating.addRating(rating);
@@ -41,9 +39,8 @@ public class StarRatingTest {
 
     @Test
     @DisplayName("수강후기글이 삭제될때, 별점 값은 줄어들어 반환된다.")
-    void removeRating() {
+    void shouldDecreaseRatingValuesWhenRemovingRating() {
         Double rating = classReviewRequest.getStarLating();
-        System.out.println(classReviewRequest.getStarLating());
 
         StarRating starRating = StarRating.createRatingBuilder();
         starRating.addRating(rating);
@@ -60,9 +57,8 @@ public class StarRatingTest {
 
     @Test
     @DisplayName("글 2개를 추가하고 2개를 삭제하여, 평균 별점, 총 별점은 0.0을 반환한다.")
-    void doubleAddToRemoveRating() {
+    void shouldReturnZeroRatingsWhenAddingTwoAndRemovingTwo() {
         Double rating = classReviewRequest.getStarLating();
-        System.out.println(classReviewRequest.getStarLating());
 
         StarRating starRating = StarRating.createRatingBuilder();
         starRating.addRating(rating); // 4.0

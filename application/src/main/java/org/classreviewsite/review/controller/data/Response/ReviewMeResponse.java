@@ -1,23 +1,24 @@
 package org.classreviewsite.review.controller.data.Response;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.classreviewsite.common.util.NumberFormat;
-import org.classreviewsite.lecture.infrastructure.Lecture;
-import org.classreviewsite.review.infrastructure.ClassReview;
+import org.classreviewsite.domain.util.NumberFormat;
+import org.classreviewsite.domain.review.ClassReview;
 
 @Data
 @AllArgsConstructor
 @Slf4j
+@Builder
 public class ReviewMeResponse {
-    private Long postId;
+    private Long reviewId;
     private String postTitle;
     private String postContent;
     private Double starLating;
     private Integer likes;
     private String createDate;
-    private Lecture lecture;
+    private String lectureName;
 
     public static ReviewMeResponse from(ClassReview classReview){
         return new ReviewMeResponse(
@@ -27,10 +28,7 @@ public class ReviewMeResponse {
                 NumberFormat.format(classReview.getStarLating()),
                 classReview.getLikes(),
                 classReview.getCreatedDate().getYear()+"-"+classReview.getCreatedDate().getMonth().getValue()+"-"+classReview.getCreatedDate().getDayOfMonth(),
-                classReview.getLecId()
-
+                classReview.getLecId().getLectureName()
         );
     }
-
-
 }

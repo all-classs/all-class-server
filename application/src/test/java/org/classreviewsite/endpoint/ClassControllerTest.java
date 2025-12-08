@@ -1,11 +1,12 @@
 package org.classreviewsite.endpoint;
 
+import org.classreviewsite.domain.lecture.LectureType;
 import org.classreviewsite.lecture.controller.ClassController;
 import org.classreviewsite.lecture.controller.data.response.EnrollmentResponse;
-import org.classreviewsite.lecture.service.EnrollmentService;
+import org.classreviewsite.lecture.service.EnrollmentDataService;
 import org.classreviewsite.review.controller.data.Response.ClassListResponse;
 import org.classreviewsite.review.controller.data.Response.ClassListWithProfessorResponse;
-import org.classreviewsite.review.service.ClassListService;
+import org.classreviewsite.review.service.ClassListAndDetailService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32,10 +33,10 @@ class ClassControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private EnrollmentService enrollmentService;
+    private EnrollmentDataService enrollmentDataService;
 
     @MockBean
-    private ClassListService classListService;
+    private ClassListAndDetailService classListAndDetailService;
 
     @Nested
     @DisplayName("강의 목록 조회 테스트")
@@ -52,7 +53,7 @@ class ClassControllerTest {
                 createMockClassListResponse(2L, "데이터베이스")
             );
             
-            given(classListService.get(university)).willReturn(mockResponse);
+            given(classListAndDetailService.get(university)).willReturn(mockResponse);
             
             // when & then
             mockMvc.perform(get("/class")
@@ -76,7 +77,7 @@ class ClassControllerTest {
             ClassListWithProfessorResponse.ClassListWithProfessorNameInDetail mockResponse = 
                 createMockClassDetailResponse(lectureId, "자바프로그래밍", "김교수");
             
-            given(classListService.detail(lectureId)).willReturn(mockResponse);
+            given(classListAndDetailService.detail(lectureId)).willReturn(mockResponse);
             
             // when & then
             mockMvc.perform(get("/class")
@@ -107,7 +108,7 @@ class ClassControllerTest {
             // given
             String nonExistentUniversity = "존재하지않는대학교";
             
-            given(classListService.get(nonExistentUniversity))
+            given(classListAndDetailService.get(nonExistentUniversity))
                     .willThrow(new java.util.NoSuchElementException("해당 학교의 강의가 존재하지 않습니다."));
             
             // when & then
@@ -138,7 +139,7 @@ class ClassControllerTest {
                 createMockClassListResponse(1L, "특수강의")
             );
             
-            given(classListService.get(universityWithSpecialChars)).willReturn(mockResponse);
+            given(classListAndDetailService.get(universityWithSpecialChars)).willReturn(mockResponse);
             
             // when & then
             mockMvc.perform(get("/class")
@@ -164,7 +165,7 @@ class ClassControllerTest {
                 createMockEnrollmentResponse(2L, "데이터베이스")
             );
             
-            given(enrollmentService.findClassForSemester(userNumber)).willReturn(mockResponse);
+            given(enrollmentDataService.findClassForSemester(userNumber)).willReturn(mockResponse);
             
             // when & then
             mockMvc.perform(get("/class/me")
@@ -195,7 +196,7 @@ class ClassControllerTest {
             // given
             int nonExistentUserNumber = 99999999;
             
-            given(enrollmentService.findClassForSemester(nonExistentUserNumber))
+            given(enrollmentDataService.findClassForSemester(nonExistentUserNumber))
                     .willThrow(new org.classreviewsite.handler.exception.EnrollmentNotFoundException("해당 학생의 수강 정보가 없습니다."));
             
             // when & then
@@ -237,7 +238,7 @@ class ClassControllerTest {
                 createMockEnrollmentResponse(1L, "자바프로그래밍")
             );
             
-            given(enrollmentService.findClassForSemester(validUserNumber)).willReturn(mockResponse);
+            given(enrollmentDataService.findClassForSemester(validUserNumber)).willReturn(mockResponse);
             
             // when & then
             mockMvc.perform(get("/class/me")
@@ -254,7 +255,7 @@ class ClassControllerTest {
             // given
             int userNumber = 20230999;
             
-            given(enrollmentService.findClassForSemester(userNumber))
+            given(enrollmentDataService.findClassForSemester(userNumber))
                     .willThrow(new org.classreviewsite.handler.exception.UserNotFoundException("해당 학생이 수강한 강의는 없습니다."));
             
             // when & then
@@ -267,21 +268,42 @@ class ClassControllerTest {
 
     // 헬퍼 메서드들
     private ClassListResponse createMockClassListResponse(Long lectureId, String lectureName) {
-        // ClassListResponse 객체를 생성하는 헬퍼 메서드
-        // 실제 구현은 ClassListResponse의 생성자나 팩토리 메서드에 따라 달라집니다
-        return null; // 실제로는 적절한 객체를 반환해야 합니다
+        return new ClassListResponse(
+            lectureId,
+            lectureName,
+            "소프트웨어학과",
+            "한국대학교",
+            LectureType.전공필수,
+            4.5,
+            "김교수"
+        );
     }
     
     private ClassListWithProfessorResponse.ClassListWithProfessorNameInDetail createMockClassDetailResponse(
             Long lectureId, String lectureName, String professor) {
-        // ClassListWithProfessorNameInDetail 객체를 생성하는 헬퍼 메서드
-        // 실제 구현은 해당 클래스의 생성자나 팩토리 메서드에 따라 달라집니다
-        return null; // 실제로는 적절한 객체를 반환해야 합니다
+        return ClassListWithProfessorResponse.ClassListWithProfessorNameInDetail.builder()
+                .lectureId(lectureId)
+                .lectureName(lectureName)
+                .averageStarLating(4.5)
+                .totalStarLating(9.0)
+                .reviewCount(2L)
+                .department("소프트웨어학과")
+                .university("한국대학교")
+                .lectureType(LectureType.전공필수)
+                .professor(professor)
+                .introduction("강의 소개")
+                .profileImage("image.jpg")
+                .build();
     }
     
-    private EnrollmentResponse createMockEnrollmentResponse(Long completionNumber, String lectureName) {
-        // EnrollmentResponse 객체를 생성하는 헬퍼 메서드
-        // 실제 구현은 EnrollmentResponse의 생성자나 팩토리 메서드에 따라 달라집니다
-        return null; // 실제로는 적절한 객체를 반환해야 합니다
+    private EnrollmentResponse createMockEnrollmentResponse(Long classNumber, String lectureName) {
+        return EnrollmentResponse.builder()
+                .classNumber(classNumber)
+                .lectureName(lectureName)
+                .professorName("김교수")
+                .semester("1학기")
+                .CompletionType("전공필수")
+                .CompletionYear("2023")
+                .build();
     }
 }
