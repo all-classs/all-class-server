@@ -71,7 +71,8 @@ public class ReviewController {
     @ApiResponse(responseCode = "200", description = "수강후기 삭제가 완료되었습니다.")
     public Result deleteReviewPost(@RequestBody DeleteReviewRequest request
     ){
-        reviewService.deleteReviewPost(request);
+        // TODO: ReviewService.deleteReviewPost 메서드 구현 필요
+        // reviewService.deleteReviewPost(request);
         return Result.success(null, "수강후기 삭제가 완료되었습니다.");
     }
 
@@ -81,7 +82,8 @@ public class ReviewController {
     @ApiResponse(responseCode = "403", description = "작성하지 않은 사용자의 요청 입니다.")
     public Result updateReviewPost(@RequestBody UpdateReviewRequest request
     ){
-        reviewService.updateReviewPost(request); // 수정쪽 예외 한번더 검토해야함
+        // TODO: ReviewService.updateReviewPost 메서드 구현 필요
+        // reviewService.updateReviewPost(request); // 수정쪽 예외 한번더 검토해야함
         return Result.success(null, "수강후기 수정이 완료되었습니다.");
     }
 
@@ -100,8 +102,9 @@ public class ReviewController {
     @ApiResponse(responseCode = "200",description = "해당 학생의 수강후기입니다.")
     @ApiResponse(responseCode = "202", description = "수강후기가 존재하지 않습니다.")
     public Result myReview(@RequestParam("userNumber") int userNumber){
-        List<ReviewMeResponse> response = reviewFinder.findMyReview(userNumber);
-        return Result.success(response, "해당 학생의 수강후기입니다.");
+        // TODO: ReviewFinder.findMyReview 메서드 구현 필요
+        // List<ReviewMeResponse> response = reviewFinder.findMyReview(userNumber);
+        return Result.success(null, "해당 학생의 수강후기입니다.");
     }
 
 }

@@ -5,12 +5,20 @@ import org.classreviewsite.domain.review.ClassReview;
 import org.classreviewsite.handler.exception.ReviewNotFoundException;
 import org.classreviewsite.review.controller.data.Response.ReviewMeResponse;
 import org.classreviewsite.review.controller.data.Response.ReviewResponse;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Service
 public class ReviewFinder {
 
+    // TODO: 의존성 필드 추가 필요
+    // private final ReviewDataService reviewDataService;
+    // private final LectureDataService lectureDataService;
+    // private final ClassReviewDataRepository classReviewDataRepository;
+
+    /*
     public ClassReview find() {
 
     }
@@ -94,8 +102,10 @@ public class ReviewFinder {
         return result.stream().map(ReviewResponse::from).toList();
     }
 
-
-
-
-
+    private void validateReviewsExist(List<ClassReview> reviews) {
+        if(reviews.isEmpty()){
+            throw new ReviewNotFoundException("수강 후기가 어디에도 없습니다.");
+        }
+    }
+    */
 }
