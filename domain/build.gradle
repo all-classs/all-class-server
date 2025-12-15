@@ -16,6 +16,7 @@ test {
 }
 
 dependencies {
+    implementation project(':internal:logger')
 
 
     // Spring Boot & JPA

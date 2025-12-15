@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service
 public class ReviewFinder {
 
     // TODO: 의존성 필드 추가 필요

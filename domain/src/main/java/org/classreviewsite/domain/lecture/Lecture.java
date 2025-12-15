@@ -38,9 +38,6 @@ public class Lecture {
     @Enumerated(EnumType.STRING)
     private LectureType lectureType;
 
-    @Version
-    private Long version;
-
     public void addStarRating(Double starRating) {
         this.starRating.addRating(starRating);
     }
