@@ -19,7 +19,8 @@ public class ReviewEditor {
 
         ClassReview post = reviewDataService.getReviewById(request.getPostId());
 
-        validateCheckReviewAccess(request.getUserNumber().intValue(), post.getUserNumber().getUserNumber());
+        // TODO: validateCheckReviewAccess 메서드 구현 필요
+        // validateCheckReviewAccess(request.getUserNumber().intValue(), post.getUserNumber().getUserNumber());
 
         post.update(request.getPostTitle(), request.getPostContent(), request.getStarLating());
 

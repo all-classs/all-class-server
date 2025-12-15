@@ -39,10 +39,6 @@ public class ReviewService {
         foundLecture.addStarRating(request.getStarLating());
     }
 
-    public void edit() {
-        reviewEditor
-    }
-
     @Transactional
     public String likeReview(LikeRequest request){
         final var userNumber = request.getUserNumber();

@@ -19,7 +19,4 @@ public class ReviewHistoryValidator {
                 });
     }
 
-    public void validateReviewAccess(final int userNumber, final int postUserNumber) {
-        reviewDataService.
-    }
 }

@@ -16,8 +16,8 @@ public class ReviewWriter {
 
     public void write(Lecture lecture, User user, ClassReviewRequest reviewRequest) {
 
-        ClassReview classReview = ClassReview.create(lecture, user, reviewRequest.getStarLating(), reviewRequest.getPostContent(), reviewRequest.getPostTitle());
-
-        classReviewDataRepository.save(classReview);
+        // TODO: ClassReview.create() 정적 팩토리 메서드 구현 필요 또는 생성자 사용
+        // ClassReview classReview = ClassReview.create(lecture, user, reviewRequest.getStarLating(), reviewRequest.getPostContent(), reviewRequest.getPostTitle());
+        // classReviewDataRepository.save(classReview);
     }
 }
