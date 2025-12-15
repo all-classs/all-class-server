@@ -2,3 +2,4 @@ rootProject.name = 'ClassReviewSite'
 
 include 'application'
 include 'domain'
+include 'internal:logger'
