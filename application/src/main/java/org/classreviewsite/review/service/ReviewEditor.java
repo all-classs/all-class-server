@@ -1,18 +1,19 @@
 package org.classreviewsite.review.service;
 
-import lombok.RequiredArgsConstructor;
 import org.classreviewsite.domain.lecture.Lecture;
 import org.classreviewsite.domain.review.ClassReview;
 import org.classreviewsite.review.controller.data.Request.UpdateReviewRequest;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component
-@RequiredArgsConstructor
 public class ReviewEditor {
 
     private final ReviewDataService reviewDataService;
     private final ReviewHistoryValidator reviewHistoryValidator;
+
+    public ReviewEditor(ReviewDataService reviewDataService, ReviewHistoryValidator reviewHistoryValidator) {
+        this.reviewDataService = reviewDataService;
+        this.reviewHistoryValidator = reviewHistoryValidator;
+    }
 
     @Transactional
     public Long edit(final UpdateReviewRequest request){
