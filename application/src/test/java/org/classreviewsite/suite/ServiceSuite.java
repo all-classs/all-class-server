@@ -10,7 +10,7 @@ import org.junit.platform.suite.api.Suite;
         EnrollmentDataServiceTest.class,
         ImageUrlServiceTest.class,
         LectureDataServiceTest.class,
-        LikeDataServiceTest.class,
+        LikeStatusCheckorTest.class,
         ReviewServiceTest.class,
         UserServiceTest.class
 })

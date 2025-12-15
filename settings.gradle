@@ -1,7 +1,4 @@
 rootProject.name = 'ClassReviewSite'
 
 include 'application'
-include 'batch-student'
-include 'batch-lecture'
-include 'batch-enrollment'
-include 'batch-dummy'
+include 'domain'

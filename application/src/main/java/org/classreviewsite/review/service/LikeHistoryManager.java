@@ -1,33 +1,19 @@
-package org.classreviewsite.review.like;
+package org.classreviewsite.review.service;
 
 import lombok.RequiredArgsConstructor;
-import org.classreviewsite.handler.exception.AlreadyLikeException;
 import org.classreviewsite.domain.review.ClassReview;
 import org.classreviewsite.domain.review.Likes;
 import org.classreviewsite.domain.review.LikesDataRepository;
 import org.classreviewsite.domain.user.User;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@Component
 @RequiredArgsConstructor
-public class LikeDataService {
+public class LikeHistoryManager {
 
     private final LikesDataRepository likesDataRepository;
 
-    @Transactional(noRollbackFor = AlreadyLikeException.class)
-    public Likes check(User user, ClassReview classReview){
-
-        Likes likes = likesDataRepository.findByUserAndClassReview(user, classReview);
-        return likes;
-
-//        if(likes)
-
-
-//                .ifPresent(m -> {
-//                    throw new AlreadyLikeException("좋아요가 취소 되었습니다.");
-//                });
-    }
 
     @Transactional
     public Likes save(Likes likes){
@@ -52,5 +38,6 @@ public class LikeDataService {
         }
         likesDataRepository.deleteAllByClassReview(classReview);
     }
+
 
 }

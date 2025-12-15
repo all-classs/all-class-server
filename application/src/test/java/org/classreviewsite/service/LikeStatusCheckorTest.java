@@ -7,7 +7,7 @@ import org.classreviewsite.domain.lecture.StarRating;
 import org.classreviewsite.domain.review.ClassReview;
 import org.classreviewsite.domain.review.Likes;
 import org.classreviewsite.domain.review.LikesDataRepository;
-import org.classreviewsite.review.like.LikeDataService;
+import org.classreviewsite.review.service.LikeStatusCheckor;
 import org.classreviewsite.domain.user.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -25,10 +25,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class LikeDataServiceTest {
+public class LikeStatusCheckorTest {
 
     @InjectMocks
-    LikeDataService likeDataService;
+    LikeStatusCheckor likeStatusCheckor;
     @Mock LikesDataRepository likesDataRepository;
 
     @Nested
@@ -63,7 +63,7 @@ public class LikeDataServiceTest {
             given(likesDataRepository.findByUserAndClassReview(user, classReview)).willReturn(null);
             
             // when & then
-            var result = likeDataService.check(user, classReview);
+            var result = likeStatusCheckor.check(user, classReview);
             
             // No exception should be thrown
         }
@@ -98,7 +98,7 @@ public class LikeDataServiceTest {
                     .willReturn(existingLike);
             
             // when & then
-            assertThatThrownBy(() -> likeDataService.check(user, classReview))
+            assertThatThrownBy(() -> likeStatusCheckor.check(user, classReview))
                     .isInstanceOf(AlreadyLikeException.class)
                     .hasMessage("좋아요가 취소 되었습니다.");
         }
@@ -135,7 +135,7 @@ public class LikeDataServiceTest {
             Likes likes = Likes.toEntity(classReview, user);
             
             // when
-            likeDataService.save(likes);
+            likeStatusCheckor.save(likes);
             
             // then
             verify(likesDataRepository).save(likes);
@@ -172,7 +172,7 @@ public class LikeDataServiceTest {
                     .build();
             
             // when
-            likeDataService.deleteByClassReviewAndUser(classReview, user);
+            likeStatusCheckor.deleteByClassReviewAndUser(classReview, user);
             
             // then
             verify(likesDataRepository).deleteByClassReviewAndUser(classReview, user);
@@ -192,7 +192,7 @@ public class LikeDataServiceTest {
                     .build();
             
             // when & then
-            assertThatThrownBy(() -> likeDataService.deleteByClassReviewAndUser(null, user))
+            assertThatThrownBy(() -> likeStatusCheckor.deleteByClassReviewAndUser(null, user))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("수강후기 객체가 잘못 전달되었습니다.");
         }
@@ -223,7 +223,7 @@ public class LikeDataServiceTest {
                     .build();
             
             // when & then
-            assertThatThrownBy(() -> likeDataService.deleteByClassReviewAndUser(classReview, null))
+            assertThatThrownBy(() -> likeStatusCheckor.deleteByClassReviewAndUser(classReview, null))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("사용자 객체가 잘못 전달되었습니다.");
         }
@@ -259,7 +259,7 @@ public class LikeDataServiceTest {
                     .build();
             
             // when
-            likeDataService.deleteAllByClassReview(classReview);
+            likeStatusCheckor.deleteAllByClassReview(classReview);
             
             // then
             verify(likesDataRepository).deleteAllByClassReview(classReview);
@@ -269,7 +269,7 @@ public class LikeDataServiceTest {
         @DisplayName("null ClassReview로 모든 좋아요 삭제 시, IllegalArgumentException을 발생한다")
         void shouldThrowExceptionWhenDeletingAllLikesWithNull() {
             // when & then
-            assertThatThrownBy(() -> likeDataService.deleteAllByClassReview(null))
+            assertThatThrownBy(() -> likeStatusCheckor.deleteAllByClassReview(null))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("수강후기 객체가 잘못 전달되었습니다.");
         }
