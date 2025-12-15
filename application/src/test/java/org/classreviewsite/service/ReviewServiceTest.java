@@ -15,13 +15,13 @@ import org.classreviewsite.review.controller.data.Response.ReviewResponse;
 import org.classreviewsite.domain.review.ClassReview;
 import org.classreviewsite.domain.review.ClassReviewDataRepository;
 import org.classreviewsite.domain.review.LikesDataRepository;
-import org.classreviewsite.review.like.LikeDataService;
-import org.classreviewsite.review.like.LikeService;
-import org.classreviewsite.review.like.LikedStatus;
+import org.classreviewsite.review.service.LikeStatusCheckor;
+import org.classreviewsite.review.service.LikeStateGenerator;
+import org.classreviewsite.review.service.LikedStatus;
 import org.classreviewsite.review.service.ReviewDataService;
 import org.classreviewsite.review.service.ReviewService;
-import org.classreviewsite.review.validator.LectureHistoryValidator;
-import org.classreviewsite.review.validator.ReviewHistoryValidator;
+import org.classreviewsite.review.service.LectureHistoryValidator;
+import org.classreviewsite.review.service.ReviewHistoryValidator;
 import org.classreviewsite.review.vo.LectureHistoryResponse;
 import org.classreviewsite.domain.user.User;
 import org.classreviewsite.user.service.UserService;
@@ -55,8 +55,10 @@ public class ReviewServiceTest {
     @Mock ReviewHistoryValidator reviewHistoryValidator;
     @Mock ReviewDataService reviewDataService;
     @Mock UserService userService;
-    @Mock LikeDataService likeDataService;
-    @Mock LikeService likeService;
+    @Mock
+    LikeStatusCheckor likeStatusCheckor;
+    @Mock
+    LikeStateGenerator likeStateGenerator;
     
     // Legacy mocks for backward compatibility in some tests
     @Mock ClassReviewDataRepository classReviewDataRepository;
@@ -211,16 +213,16 @@ public class ReviewServiceTest {
             
             LectureHistoryResponse response = LectureHistoryResponse.of(lecture, user);
             
-            given(lectureHistoryValidator.check(20230857, "강의명")).willReturn(response);
-            doNothing().when(reviewHistoryValidator).check(user, lecture);
+            given(lectureHistoryValidator.validate(20230857, "강의명")).willReturn(response);
+            doNothing().when(reviewHistoryValidator).validateHistory(user, lecture);
             doNothing().when(reviewDataService).save(any(ClassReview.class));
             
             // when
             reviewService.write(request);
             
             // then
-            verify(lectureHistoryValidator).check(20230857, "강의명");
-            verify(reviewHistoryValidator).check(user, lecture);
+            verify(lectureHistoryValidator).validate(20230857, "강의명");
+            verify(reviewHistoryValidator).validateHistory(user, lecture);
             verify(reviewDataService).save(any(ClassReview.class));
         }
         
@@ -246,9 +248,9 @@ public class ReviewServiceTest {
             
             LectureHistoryResponse response = LectureHistoryResponse.of(lecture, user);
             
-            given(lectureHistoryValidator.check(20230857, "강의명")).willReturn(response);
+            given(lectureHistoryValidator.validate(20230857, "강의명")).willReturn(response);
             doThrow(new AlreadyWritePostException("이미 작성한 강의입니다."))
-                    .when(reviewHistoryValidator).check(user, lecture);
+                    .when(reviewHistoryValidator).validateHistory(user, lecture);
             
             // when & then
             assertThatThrownBy(() -> reviewService.write(request))
@@ -370,7 +372,7 @@ public class ReviewServiceTest {
             
             given(userService.findUser(20230857)).willReturn(user);
             given(reviewDataService.getReviewById(1L)).willReturn(review);
-            given(likeService.isLiked(user, review)).willReturn(LikedStatus.POSSIBLE_LIKE);
+            given(likeStateGenerator.isLiked(user, review)).willReturn(LikedStatus.POSSIBLE_LIKE);
             
             // when
             String result = reviewService.likeReview(request);
@@ -408,7 +410,7 @@ public class ReviewServiceTest {
             
             given(userService.findUser(20230857)).willReturn(user);
             given(reviewDataService.getReviewById(1L)).willReturn(review);
-            given(likeService.isLiked(user, review)).willReturn(LikedStatus.ALREADY_LIKE);
+            given(likeStateGenerator.isLiked(user, review)).willReturn(LikedStatus.ALREADY_LIKE);
             
             // when
             String result = reviewService.likeReview(request);
@@ -515,14 +517,14 @@ public class ReviewServiceTest {
             
             given(userService.findUser(20230857)).willReturn(user);
             given(reviewDataService.findByReviewIdAndUserNumber(1L, user)).willReturn(review);
-            doNothing().when(likeDataService).deleteAllByClassReview(review);
+            doNothing().when(likeStatusCheckor).deleteAllByClassReview(review);
             doNothing().when(reviewDataService).deleteById(1L);
             
             // when
             reviewService.deleteReviewPost(request);
             
             // then
-            verify(likeDataService).deleteAllByClassReview(review);
+            verify(likeStatusCheckor).deleteAllByClassReview(review);
             verify(reviewDataService).deleteById(1L);
         }
     }
@@ -574,10 +576,10 @@ public class ReviewServiceTest {
             LectureHistoryResponse response1 = LectureHistoryResponse.of(lecture, user1);
             LectureHistoryResponse response2 = LectureHistoryResponse.of(lecture, user2);
             
-            given(lectureHistoryValidator.check(20230857, "자바프로그래밍")).willReturn(response1);
-            given(lectureHistoryValidator.check(20230858, "자바프로그래밍")).willReturn(response2);
-            doNothing().when(reviewHistoryValidator).check(user1, lecture);
-            doNothing().when(reviewHistoryValidator).check(user2, lecture);
+            given(lectureHistoryValidator.validate(20230857, "자바프로그래밍")).willReturn(response1);
+            given(lectureHistoryValidator.validate(20230858, "자바프로그래밍")).willReturn(response2);
+            doNothing().when(reviewHistoryValidator).validateHistory(user1, lecture);
+            doNothing().when(reviewHistoryValidator).validateHistory(user2, lecture);
             doNothing().when(reviewDataService).save(any(ClassReview.class));
             
             // when
@@ -600,8 +602,8 @@ public class ReviewServiceTest {
             
             // verify
             verify(reviewDataService, times(2)).save(any(ClassReview.class));
-            verify(lectureHistoryValidator, times(2)).check(anyInt(), eq("자바프로그래밍"));
-            verify(reviewHistoryValidator, times(2)).check(any(User.class), eq(lecture));
+            verify(lectureHistoryValidator, times(2)).validate(anyInt(), eq("자바프로그래밍"));
+            verify(reviewHistoryValidator, times(2)).validateHistory(any(User.class), eq(lecture));
         }
         
         @Test
@@ -653,10 +655,10 @@ public class ReviewServiceTest {
             LectureHistoryResponse response2 = LectureHistoryResponse.of(lecture, user2);
             LectureHistoryResponse response3 = LectureHistoryResponse.of(lecture, user3);
             
-            given(lectureHistoryValidator.check(20230857, "데이터구조")).willReturn(response1);
-            given(lectureHistoryValidator.check(20230858, "데이터구조")).willReturn(response2);
-            given(lectureHistoryValidator.check(20230859, "데이터구조")).willReturn(response3);
-            doNothing().when(reviewHistoryValidator).check(any(User.class), eq(lecture));
+            given(lectureHistoryValidator.validate(20230857, "데이터구조")).willReturn(response1);
+            given(lectureHistoryValidator.validate(20230858, "데이터구조")).willReturn(response2);
+            given(lectureHistoryValidator.validate(20230859, "데이터구조")).willReturn(response3);
+            doNothing().when(reviewHistoryValidator).validateHistory(any(User.class), eq(lecture));
             doNothing().when(reviewDataService).save(any(ClassReview.class));
             
             // when

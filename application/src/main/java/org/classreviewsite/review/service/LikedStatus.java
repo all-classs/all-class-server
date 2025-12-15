@@ -1,4 +1,4 @@
-package org.classreviewsite.review.like;
+package org.classreviewsite.review.service;
 
 public enum LikedStatus {
     ALREADY_LIKE("이미 좋아요한 상태"),

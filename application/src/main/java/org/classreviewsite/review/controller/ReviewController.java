@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.classreviewsite.review.service.ReviewFinder;
 import org.classreviewsite.util.Result;
 import org.classreviewsite.review.controller.data.Response.ReviewMeResponse;
 import org.classreviewsite.review.controller.data.Request.DeleteReviewRequest;
@@ -23,6 +24,7 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final ReviewFinder reviewFinder;
 
 //    @GetMapping("/review")
 //    @Operation(summary = "수강 후기 전체 목록 조회", description = "Param 설명 :lectureId 꼭 입력해주셔야됩니다. lowness true일 경우 별점 낮은 순 조회입니다. likes true일 경우 좋아요 높은순 조회입니다. recent true일 경우 날짜 최신순 조회입니다. lectureId만 줄 경우 기본값 별점 높은순 조회입니다. ex) ?lectureId=1&lowness=true , ?lectureId=1")
@@ -98,7 +100,7 @@ public class ReviewController {
     @ApiResponse(responseCode = "200",description = "해당 학생의 수강후기입니다.")
     @ApiResponse(responseCode = "202", description = "수강후기가 존재하지 않습니다.")
     public Result myReview(@RequestParam("userNumber") int userNumber){
-        List<ReviewMeResponse> response = reviewService.findMyReview(userNumber);
+        List<ReviewMeResponse> response = reviewFinder.findMyReview(userNumber);
         return Result.success(response, "해당 학생의 수강후기입니다.");
     }
 

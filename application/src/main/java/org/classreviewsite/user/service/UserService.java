@@ -16,7 +16,7 @@ public class UserService {
     private final UserDataRepository userDataRepository;
 
     @Transactional(readOnly = true)
-    public User findUser(Integer userNumber){
+    public User findUser(int userNumber){
         return userDataRepository.findById(userNumber).orElseThrow(() -> new UserNotFoundException("해당 학생이 존재하지 않습니다."));
     }
 

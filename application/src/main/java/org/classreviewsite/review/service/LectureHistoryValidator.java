@@ -1,4 +1,4 @@
-package org.classreviewsite.review.validator;
+package org.classreviewsite.review.service;
 
 import lombok.RequiredArgsConstructor;
 import org.classreviewsite.domain.lecture.Enrollment;
@@ -15,7 +15,7 @@ public class LectureHistoryValidator {
 
     private final EnrollmentDataService lectureHistoryService;
 
-    public LectureHistoryResponse check(int userNumber, String lectureName) {
+    public LectureHistoryResponse validate(int userNumber, String lectureName) {
         Enrollment reviewHistory = lectureHistoryService.findByUserNumber(userNumber, lectureName)
                 .orElseThrow(
                         () -> new NoPermissionReviewException("내역이 존재하지 않습니다.")
