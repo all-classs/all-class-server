@@ -1,7 +1,7 @@
 all-class 서버 구조도
 ---
 
-<img width="990" height="860" alt="image" src="https://github.com/user-attachments/assets/ec15a5aa-c3c6-4737-9848-2d92035186b0" />
+<img width="1374" height="740" alt="image" src="https://github.com/user-attachments/assets/d27ef6d5-ad48-43ef-a176-f2415e2ed7a7" />
 
 
 프로젝트 목표
@@ -15,29 +15,14 @@ all-class 서버 구조도
 기술적 issue 해결 과정
 ---
 
-- [#6] Open AI API IO 에러 디버깅 과정 <br/>
-  https://johnsnote.vercel.app/posts/vilification-shooting
-    
-- [#5] 스프링 배치를 통해 엑셀데이터를 주입하기 <br/>
-  https://johnsnote.vercel.app/posts/spring-batch-trouble
-  
-- [#4] 실제 데이터구조에 맞춰 데이터 구조를 변경하는 과정 <br/>
-  https://johnsnote.vercel.app/posts/2025-07-05
-  
-- [#3] 도메인 클래스 중복 사용의 일관성을 어떻게 유지할까? <br/>
-  https://johnsnote.vercel.app/posts/2025-07-04
-  
-- [#2] 간결한 Service 로직 만들기 <br/>
-https://johnsnote.vercel.app/posts/service-logic-simple
 
-- [#1] 전체 후기 조회시 N+1로 응답하는 쿼리 해결하기 <br/>
-https://johnsnote.vercel.app/posts/nplusone
 
 
 DB ERD
 ---
 
-<img width="1314" height="951" alt="image" src="https://raw.githubusercontent.com/all-classs/all-class-server/refs/heads/main/images/erd.png" />
+<img width="975" height="811" alt="image" src="https://github.com/user-attachments/assets/c5578b00-2be4-43fb-b1a8-894982f5dd3d" />
+
 
 Use Case
 ---
