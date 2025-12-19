@@ -15,23 +15,7 @@ all-class 서버 구조도
 기술적 issue 해결 과정
 ---
 
-- [#6] Open AI API IO 에러 디버깅 과정 <br/>
-  https://johnsnote.vercel.app/posts/vilification-shooting
-    
-- [#5] 스프링 배치를 통해 엑셀데이터를 주입하기 <br/>
-  https://johnsnote.vercel.app/posts/spring-batch-trouble
-  
-- [#4] 실제 데이터구조에 맞춰 데이터 구조를 변경하는 과정 <br/>
-  https://johnsnote.vercel.app/posts/2025-07-05
-  
-- [#3] 도메인 클래스 중복 사용의 일관성을 어떻게 유지할까? <br/>
-  https://johnsnote.vercel.app/posts/2025-07-04
-  
-- [#2] 간결한 Service 로직 만들기 <br/>
-https://johnsnote.vercel.app/posts/service-logic-simple
 
-- [#1] 전체 후기 조회시 N+1로 응답하는 쿼리 해결하기 <br/>
-https://johnsnote.vercel.app/posts/nplusone
 
 
 DB ERD
