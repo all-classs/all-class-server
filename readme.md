@@ -37,7 +37,8 @@ https://johnsnote.vercel.app/posts/nplusone
 DB ERD
 ---
 
-<img width="1314" height="951" alt="image" src="https://raw.githubusercontent.com/all-classs/all-class-server/refs/heads/main/images/erd.png" />
+<img width="975" height="811" alt="image" src="https://github.com/user-attachments/assets/c5578b00-2be4-43fb-b1a8-894982f5dd3d" />
+
 
 Use Case
 ---
